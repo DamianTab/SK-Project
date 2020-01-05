@@ -2,7 +2,6 @@
 #include "netinet/in.h"
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <map>
 #include <string>
 #include <error.h>
 #include <sys/epoll.h>
@@ -15,37 +14,12 @@ using namespace std;
 
 //Server class
 Server* server = new Server;
-//Sample message
-char buffer[] = "to gang z albanii otwieraj drzwi";
 
 //Functions
 void createServerSocket(int argc, char **argv);
 void closeServer();
-void writeData(int fd, char *buffer, int count);
-int readData(int fd, char *buffer, int buffsize);
 void handleEpollEvents();
 
-
-//Lambdas
-std::function<void()> handleServer = [] () {
-    writeData(1, buffer, sizeof(buffer));
-
-    int new_connection = accept(server->fd, NULL, NULL);
-    printf("New connection noticed with socket: %d \n", new_connection);
-
-//    char tempBuffer[5];
-//    int bytes = readData(new_connection, tempBuffer, sizeof(tempBuffer));
-//    string login(tempBuffer);
-
-//    if (usersMap.find())
-//    server->getUsersMap().find()
-    map<std::string, int> mapka = server->getUsersMap();
-    server->getUsersMap().insert(pair<string, int>("login", new_connection));
-
-    printf("To jest w srodku: %d , A tego nie ma: %d \n",server->getUsersMap()["login"], server->getUsersMap()["login111"]);
-
-    writeData(new_connection, buffer, sizeof(buffer));
-};
 
 int main(int argc, char **argv) {
     createServerSocket(argc, argv);
@@ -55,7 +29,7 @@ int main(int argc, char **argv) {
         error(1, errno, "Failed to execute 'listen'\n");
 
     server->setEpollFd(epoll_create1(0));
-    epoll_event ee {EPOLLIN, {.ptr=&handleServer}};
+    epoll_event ee {EPOLLIN, {.ptr=server}};
     epoll_ctl(server->getEpollFd(), EPOLL_CTL_ADD, server->fd, &ee);
 
     handleEpollEvents();
@@ -97,7 +71,8 @@ void handleEpollEvents(){
                 exit(0);
             }
             if (ee.events & EPOLLIN) {
-                (*(std::function<void()>*)ee.data.ptr)();
+//                (*(std::function<void()>*)ee.data.ptr)();
+                ((SocketHandler*)ee.data.ptr)->handleEvent(ee.events);
             }
     }
 
@@ -105,17 +80,5 @@ void handleEpollEvents(){
 
 void closeServer(){
     close(server->fd);
-}
-
-int readData(int fd, char * buffer, int buffsize){
-    int bytes = read(fd, buffer, buffsize);
-    if(bytes == -1) error(1, errno, "Read failed on descriptor %d\n", fd);
-    return bytes;
-}
-
-void writeData(int fd, char * buffer, int count){
-    int bytes = write(fd, buffer, count);
-    if(bytes == -1) error(1, errno, "Write failed on descriptor %d\n", fd);
-    if(bytes != count) error(0, errno, "Wrote less than requested to descriptor %d (%d/%d)\n", fd, count, bytes);
 }
 

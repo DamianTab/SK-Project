@@ -9,6 +9,6 @@ include_directories(Server)
 include_directories(Classes)
 
 
-add_executable(client Client/main_client.cpp Classes/Client.cpp Classes/Client.h Classes/SocketHandler.h Classes/Server.cpp Classes/Server.h)
+add_executable(client Client/main_client.cpp Classes/Client.cpp Classes/Client.h Classes/SocketHandler.h Classes/Server.cpp Classes/Server.h Utils/utils.h)
 
 add_executable(server Server/main_Server.cpp Classes/Client.cpp Classes/Client.h Classes/SocketHandler.h Classes/Server.cpp Classes/Server.h)
