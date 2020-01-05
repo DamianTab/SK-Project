@@ -7,11 +7,12 @@
 
 
 #include <cstdint>
+#include <netinet/in.h>
 
 class SocketHandler {
-protected:
-    int fd;
 public:
+    int fd;
+    sockaddr_in sockAddr;
     virtual void handleEvent (uint32_t events) = 0;
     virtual ~SocketHandler() {}
 };

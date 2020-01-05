@@ -13,14 +13,8 @@
 
 using namespace std;
 
+//Server class
 Server* server = new Server;
-
-// server socket
-int serverFd;
-// Epoll socket
-int epollFd;
-// Map with user login and socket (FD)
-map<string, int> usersMap;
 //Sample message
 char buffer[] = "to gang z albanii otwieraj drzwi";
 
@@ -29,14 +23,14 @@ void createServerSocket(int argc, char **argv);
 void closeServer();
 void writeData(int fd, char *buffer, int count);
 int readData(int fd, char *buffer, int buffsize);
-void handleEpollEvents(int epollFd);
+void handleEpollEvents();
 
 
 //Lambdas
-std::function<void()> handleServer = [] () -> const auto {
+std::function<void()> handleServer = [] () {
     writeData(1, buffer, sizeof(buffer));
 
-    int new_connection = accept(serverFd, NULL, NULL);
+    int new_connection = accept(server->fd, NULL, NULL);
     printf("New connection noticed with socket: %d \n", new_connection);
 
 //    char tempBuffer[5];
@@ -44,8 +38,11 @@ std::function<void()> handleServer = [] () -> const auto {
 //    string login(tempBuffer);
 
 //    if (usersMap.find())
-    usersMap.insert(pair<string, int>("login", new_connection));
-    printf("To jest w srodku: %d , A tego nie ma: %d \n",usersMap["login"], usersMap["login111"]);
+//    server->getUsersMap().find()
+    map<std::string, int> mapka = server->getUsersMap();
+    server->getUsersMap().insert(pair<string, int>("login", new_connection));
+
+    printf("To jest w srodku: %d , A tego nie ma: %d \n",server->getUsersMap()["login"], server->getUsersMap()["login111"]);
 
     writeData(new_connection, buffer, sizeof(buffer));
 };
@@ -53,15 +50,15 @@ std::function<void()> handleServer = [] () -> const auto {
 int main(int argc, char **argv) {
     createServerSocket(argc, argv);
 
-    int res = listen(serverFd, SOMAXCONN);
+    int res = listen(server->fd, SOMAXCONN);
     if(res)
         error(1, errno, "Failed to execute 'listen'\n");
 
-    epollFd = epoll_create1(0);
+    server->setEpollFd(epoll_create1(0));
     epoll_event ee {EPOLLIN, {.ptr=&handleServer}};
-    epoll_ctl(epollFd, EPOLL_CTL_ADD, serverFd, &ee);
+    epoll_ctl(server->getEpollFd(), EPOLL_CTL_ADD, server->fd, &ee);
 
-    handleEpollEvents(epollFd);
+    handleEpollEvents();
 
     closeServer();
     return 0;
@@ -70,27 +67,27 @@ int main(int argc, char **argv) {
 void createServerSocket(int argc, char **argv){
     if (argc != 3)
         error(1, 0, "To correctly run type: %s <IP adress> <port>\n", argv[0]);
-    sockaddr_in serverAddress{
+    server->sockAddr={
             .sin_family = AF_INET,
             .sin_port   = htons(atoi(argv[2])),
             .sin_addr   = {inet_addr(argv[1])}
     };
-    serverFd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if(serverFd == -1)
+    server->fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    if(server->fd == -1)
         error(1, errno, "Failed to create server socket\n");
 
 //    Only allows to faster use the same port - can be deleted later
     const int one = 1;
-    setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
+    setsockopt(server->fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
 
-    if(bind(serverFd, (sockaddr*) &serverAddress, sizeof(serverAddress)))
+    if(bind(server->fd, (sockaddr*) &server->sockAddr, sizeof(server->sockAddr)))
         error(1,errno,"Failed to bind server address!\n");
 }
 
-void handleEpollEvents(int epollFd){
+void handleEpollEvents(){
     epoll_event ee;
     while(1) {
-        if (-1 == epoll_wait(epollFd, &ee, 1, -1)) {
+        if (-1 == epoll_wait(server->getEpollFd(), &ee, 1, -1)) {
             closeServer();
             error(1, errno, "Function epoll_wait failed\n");
         }
@@ -107,7 +104,7 @@ void handleEpollEvents(int epollFd){
 }
 
 void closeServer(){
-    close(serverFd);
+    close(server->fd);
 }
 
 int readData(int fd, char * buffer, int buffsize){

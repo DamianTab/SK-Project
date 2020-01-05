@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
     serverAdress.sin_family = PF_INET;
 
     int serverSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    connect(serverSocket, (sockaddr *) &serverAdress, sizeof(serverAdress));
+    connect(serverSocket, (sockaddr*)&serverAdress, sizeof(serverAdress));
 
 //    Wczytywanie loginu
 //    string login;
@@ -35,7 +35,7 @@ int main(int argc, char **argv) {
 
     int x = read(serverSocket, duzybufor, BUFFER_SIZE);
     perror("Reading from socket");
-    printf("\n%d Data: %s\n", x, duzybufor);
+    printf("\n%d Data: %s\n",x, duzybufor);
 
 //    while(true);
 
