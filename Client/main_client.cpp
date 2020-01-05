@@ -5,9 +5,7 @@
 #include <arpa/inet.h>
 #include <error.h>
 #include <cstring>
-
-#define BUFFER_SIZE 512
-
+#include <Utils/utils.h>
 using namespace std;
 
 int main(int argc, char **argv) {
@@ -22,22 +20,32 @@ int main(int argc, char **argv) {
     serverAdress.sin_family = PF_INET;
 
     int serverSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    connect(serverSocket, (sockaddr*)&serverAdress, sizeof(serverAdress));
+    connect(serverSocket, (sockaddr *) &serverAdress, sizeof(serverAdress));
 
-//    Wczytywanie loginu
-//    string login;
-//    cin>>login;
-//    char buffer[login.size()+1];
-//    strcpy(buffer, login.c_str());
-//    cout<<login<<endl;
-//    write(serverSocket, buffer, sizeof(buffer));
-//    cout<<"Dziala"<<endl;
+    std::string response;
+    int bytes;
 
-    int x = read(serverSocket, duzybufor, BUFFER_SIZE);
-    perror("Reading from socket");
-    printf("\n%d Data: %s\n",x, duzybufor);
+    do {
+        char messageBuffer[BUFFER_SIZE];
+        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
+        writeData(1, messageBuffer, bytes);
 
-//    while(true);
+        string login;
+        cin >> login;
+        char tempBuffer[login.size()+1];
+        strcpy(tempBuffer, login.c_str());
+        writeData(serverSocket, tempBuffer, sizeof(tempBuffer));
+
+        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
+        string response(messageBuffer);
+
+        //todo usunac
+        writeData(1, messageBuffer, sizeof(messageBuffer));
+    } while (response != "Success");
+
+//    int x = read(serverSocket, duzybufor, BUFFER_SIZE);
+//    perror("Reading from socket");
+//    printf("\n%d Data: %s\n",x, duzybufor);
 
     shutdown(serverSocket, SHUT_RDWR);
     close(serverSocket);

@@ -25,6 +25,9 @@ public:
 
     void deleteClient(std::string login);
 
+
+
+
     std::map<std::string, int> &getUsersMap();
 
     void setUsersMap(std::map<std::string, int> &usersMap);

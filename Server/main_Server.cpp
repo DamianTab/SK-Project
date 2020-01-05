@@ -5,11 +5,7 @@
 #include <string>
 #include <error.h>
 #include <sys/epoll.h>
-#include <functional>
 #include <Classes/Server.h>
-
-#define BUFFER_SIZE 512
-
 using namespace std;
 
 //Server class
@@ -62,18 +58,18 @@ void handleEpollEvents(){
     epoll_event ee;
     while(1) {
         if (-1 == epoll_wait(server->getEpollFd(), &ee, 1, -1)) {
-            closeServer();
             error(1, errno, "Function epoll_wait failed\n");
+            closeServer();
+            exit(0);
         }
-            if (ee.events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
-                error(1, errno, "Internal server error. Please contact developers ASAP!\n");
-                closeServer();
-                exit(0);
-            }
-            if (ee.events & EPOLLIN) {
-//                (*(std::function<void()>*)ee.data.ptr)();
-                ((SocketHandler*)ee.data.ptr)->handleEvent(ee.events);
-            }
+        if (ee.events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
+            error(1, errno, "Internal server error. Please contact developers ASAP!\n");
+            closeServer();
+            exit(0);
+        }
+        if (ee.events & EPOLLIN) {
+            ((SocketHandler*)ee.data.ptr)->handleEvent(ee.events);
+        }
     }
 
 }

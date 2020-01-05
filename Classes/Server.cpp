@@ -5,33 +5,49 @@
 #include "Server.h"
 #include <Utils/utils.h>
 
-
 //Sample message
-char buffer[] = "to gang z albanii otwieraj drzwi";
+char messageBuffer[] = "Prosze wpisac unikalny login: ";
+char successBuffer[] = "Success";
 
 Server::Server() {
     usersMap.clear();
 }
 
 void Server::handleEvent(uint32_t events) {
-    writeData(1, buffer, sizeof(buffer));
+    //todo zmienic tłumaczenia na angielski
 
     int new_connection = accept(fd, NULL, NULL);
     printf("New connection noticed with socket: %d \n", new_connection);
 
-//    char tempBuffer[5];
-//    int bytes = readData(new_connection, tempBuffer, sizeof(tempBuffer));
-//    string login(tempBuffer);
+    char tempBuffer[BUFFER_SIZE];
+    std::string login;
+    int bytes;
 
-//    if (usersMap.find())
-//    server->getUsersMap().find()
-    usersMap.insert(std::pair<std::string, int>("login", new_connection));
+    do {
+        writeData(new_connection, messageBuffer, sizeof(messageBuffer));
 
-    printf("To jest w srodku: %d , A tego nie ma: %d \n",usersMap["login"], usersMap["login111"]);
+        bytes = readData(new_connection, tempBuffer, sizeof(tempBuffer));
+//        todo usunac
+        writeData(1, tempBuffer, bytes);
 
-    writeData(new_connection, buffer, sizeof(buffer));
+        std::string login(tempBuffer);
+    } while (usersMap.find(login) == usersMap.end());
+    writeData(new_connection, successBuffer, sizeof(successBuffer));
+    printf("BRAWO ! Nie istnieje jeszcze taki login: %s \n", login.c_str());
+    usersMap.insert(std::pair<std::string, int>(login, new_connection));
+}
+
+
+void Server::addClient(Client client) {
+    //todo implement
 
 }
+
+void Server::deleteClient(std::string login) {
+    //todo implement
+
+}
+
 
 int Server::getEpollFd() const {
     return epollFd;
@@ -47,14 +63,4 @@ std::map<std::string, int> &Server::getUsersMap() {
 
 void Server::setUsersMap(std::map<std::string, int> &usersMap) {
     Server::usersMap = usersMap;
-}
-
-void Server::addClient(Client client) {
-    //todo implement
-
-}
-
-void Server::deleteClient(std::string login) {
-    //todo implement
-
 }
