@@ -7,10 +7,13 @@
 #include <error.h>
 #include <sys/epoll.h>
 #include <functional>
+#include <Classes/Server.h>
 
 #define BUFFER_SIZE 512
 
 using namespace std;
+
+Server* server = new Server;
 
 // server socket
 int serverFd;
@@ -47,10 +50,6 @@ std::function<void()> handleServer = [] () -> const auto {
     writeData(new_connection, buffer, sizeof(buffer));
 };
 
-std::function<void()> handleClient = [] () {
-
-};
-
 int main(int argc, char **argv) {
     createServerSocket(argc, argv);
 
@@ -60,7 +59,6 @@ int main(int argc, char **argv) {
 
     epollFd = epoll_create1(0);
     epoll_event ee {EPOLLIN, {.ptr=&handleServer}};
-//    ee.data.fd = serverFd;
     epoll_ctl(epollFd, EPOLL_CTL_ADD, serverFd, &ee);
 
     handleEpollEvents(epollFd);
@@ -96,24 +94,14 @@ void handleEpollEvents(int epollFd){
             closeServer();
             error(1, errno, "Function epoll_wait failed\n");
         }
-//        Server
-//        if(ee.data.fd == serverFd){
-//            Server error
             if (ee.events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
                 error(1, errno, "Internal server error. Please contact developers ASAP!\n");
                 closeServer();
                 exit(0);
             }
-//            New connection
             if (ee.events & EPOLLIN) {
                 (*(std::function<void()>*)ee.data.ptr)();
-//                int new_connection = accept(serverFd, NULL, NULL);
-//                writeData(new_connection, buffer, sizeof(buffer));
             }
-//         Clients
-//        }else {
-//
-//        }
     }
 
 }
