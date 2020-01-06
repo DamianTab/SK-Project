@@ -17,10 +17,14 @@ private:
     // Map with user login and socket (FD)
     std::map<std::string, int> usersMap;
 
+    void createServerSocket(int argc, char **argv);
+
 public:
-    Server();
+    Server(int argc, char **argv);
 
     void handleEvent(uint32_t events) override;
+
+    void closeServer();
 
     void addClient(Client client);
 

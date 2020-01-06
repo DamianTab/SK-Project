@@ -1,7 +1,4 @@
 #include <sys/socket.h>
-#include "netinet/in.h"
-#include <unistd.h>
-#include <arpa/inet.h>
 #include <string>
 #include <error.h>
 #include <sys/epoll.h>
@@ -9,17 +6,14 @@
 
 using namespace std;
 
-//Server class
-Server *server = new Server;
-
 //Functions
-void createServerSocket(int argc, char **argv);
-void closeServer();
-void handleEpollEvents();
-
+void handleEpollEvents(Server *server);
 
 int main(int argc, char **argv) {
-    createServerSocket(argc, argv);
+    if (argc != 3)
+        error(1, 0, "To correctly run type: %s <IP adress> <port>\n", argv[0]);
+
+    Server *server = new Server(argc, argv);
 
     int res = listen(server->fd, SOMAXCONN);
     if (res)
@@ -29,53 +23,25 @@ int main(int argc, char **argv) {
     epoll_event ee{EPOLLIN, {.ptr=server}};
     epoll_ctl(server->getEpollFd(), EPOLL_CTL_ADD, server->fd, &ee);
 
-    handleEpollEvents();
+    handleEpollEvents(server);
 
-    closeServer();
+    server->closeServer();
     return 0;
 }
 
-void createServerSocket(int argc, char **argv) {
-    if (argc != 3)
-        error(1, 0, "To correctly run type: %s <IP adress> <port>\n", argv[0]);
-    server->sockAddr = {
-            .sin_family = AF_INET,
-            .sin_port   = htons(atoi(argv[2])),
-            .sin_addr   = {inet_addr(argv[1])}
-    };
-    server->fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    if (server->fd == -1)
-        error(1, errno, "Failed to create server socket\n");
-
-//    Only allows to faster use the same port - can be deleted later
-    const int one = 1;
-    setsockopt(server->fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
-
-    if (bind(server->fd, (sockaddr *) &server->sockAddr, sizeof(server->sockAddr)))
-        error(1, errno, "Failed to bind server address!\n");
-}
-
-void handleEpollEvents() {
+void handleEpollEvents(Server *server) {
     epoll_event ee;
     while (1) {
         if (-1 == epoll_wait(server->getEpollFd(), &ee, 1, -1)) {
             error(1, errno, "Function epoll_wait failed\n");
-            closeServer();
+            server->closeServer();
             exit(0);
         }
-        if (ee.events & (EPOLLERR | EPOLLHUP | EPOLLRDHUP)) {
-            error(1, errno, "Internal server error. Please contact developers ASAP!\n");
-            closeServer();
-            exit(0);
+        printf("---------------------------------------\n");
+        if (dynamic_cast<Server *>((SocketHandler *) ee.data.ptr)) {
+            printf("DYNAMIC CAST FOR SERVER DZIALA\n");
         }
-        if (ee.events & EPOLLIN) {
-            ((SocketHandler *) ee.data.ptr)->handleEvent(ee.events);
-        }
+        ((SocketHandler *) ee.data.ptr)->handleEvent(ee.events);
     }
 
 }
-
-void closeServer() {
-    close(server->fd);
-}
-

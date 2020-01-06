@@ -67,4 +67,30 @@ void loginServer() {
     int x = read(serverSocket, duzybufor, BUFFER_SIZE);
     perror("Reading from socket");
     printf("\n%d Data: %s\n", x, duzybufor);
+
+    char messageBuffer[] = "To jest wiadomosc dla serwera ";
+    writeData(serverSocket, messageBuffer, sizeof(messageBuffer));
+
+
+//    Proba zablokowania write
+    char data[10];
+    int sent = 1;
+    while(true) {
+        int written = write(serverSocket, data, sizeof(data));
+        if(written==10){
+            std::cout << "   Sent " << sent++ << "0\r" << std::flush;
+        } else if(written==-1){
+            if(errno == EWOULDBLOCK || errno == EAGAIN)
+                std::cout << std::endl << "Next write would block" << std::endl;
+            else
+                std::cout << std::endl << "Write went wrong" << std::endl;
+            break;
+        } else {
+            std::cout     << std::endl << "Sent only " << written << " out of 10 bytes" << std::endl;
+            break;
+        }
+    }
+
+
+
 }

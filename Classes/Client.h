@@ -16,6 +16,8 @@ private:
 
 
 public:
+    Client();
+
     void handleEvent(uint32_t events) override;
 
     // Getters and setters
