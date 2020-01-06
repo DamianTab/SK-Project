@@ -1,31 +1,98 @@
 #include <iostream>
 #include <sys/socket.h>
-#include <fcntl.h>
 #include "netinet/in.h"
 #include <unistd.h>
 #include <arpa/inet.h>
-#include <errno.h>
- 
-#define BUFFER_SIZE 512
- 
+#include <error.h>
+#include <cstring>
+#include <Utils/utils.h>
+
 using namespace std;
- 
-int main()
-{
-    sockaddr_in adres;
-    char duzybufor[BUFFER_SIZE];
-   
-    inet_aton("127.0.0.1", &adres.sin_addr);
-        adres.sin_port = htons(3000);
-        adres.sin_family = PF_INET;
 
-    int sock = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-    
-    connect(sock, (sockaddr*)&adres, sizeof(adres));
-    
-    int x = read(sock, duzybufor, BUFFER_SIZE);
-    perror("Reading from socket");
+int serverSocket;
 
-    printf("%d Data: %s\n",x, duzybufor);
+//Functions
+void createSocketAndConnect(int argc, char **argv);
+void loginServer();
+
+int main(int argc, char **argv) {
+    if (argc != 3)
+        error(1, 0, "To correctly run, type server IP and port: %s <IP adress> <port>", argv[0]);
+
+    createSocketAndConnect(argc, argv);
+
+    loginServer();
+
+    shutdown(serverSocket, SHUT_RDWR);
+    close(serverSocket);
     return 0;
+}
+
+
+void createSocketAndConnect(int argc, char **argv) {
+    sockaddr_in serverAdress;
+    inet_aton(argv[1], &serverAdress.sin_addr);
+    serverAdress.sin_port = htons(atoi(argv[2]));
+    serverAdress.sin_family = PF_INET;
+
+    serverSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+    connect(serverSocket, (sockaddr *) &serverAdress, sizeof(serverAdress));
+}
+
+void loginServer() {
+//    std::string response;
+//    int bytes;
+//
+//    do {
+//        char messageBuffer[BUFFER_SIZE];
+//        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
+//        writeData(1, messageBuffer, bytes);
+//
+//        string login;
+//        cin >> login;
+//        char tempBuffer[login.size()+1];
+//        strcpy(tempBuffer, login.c_str());
+//        writeData(serverSocket, tempBuffer, sizeof(tempBuffer));
+//
+//        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
+//        string response(messageBuffer);
+//
+//        //todo usunac
+//        writeData(1, messageBuffer, sizeof(messageBuffer));
+//    } while (response != "Success");
+
+
+
+    char duzybufor[BUFFER_SIZE];
+    int x = read(serverSocket, duzybufor, BUFFER_SIZE);
+    perror("Reading from socket");
+    printf("\n%d Data: %s\n", x, duzybufor);
+
+    char messageBuffer[] = "To jest wiadomosc dla serwera ";
+    writeData(serverSocket, messageBuffer, sizeof(messageBuffer));
+
+    printf("-----SLEEP\n");
+    sleep(1);
+
+
+//    Proba zablokowania write
+    char data[]={"wiadomosc\n"};
+    int sent = 1;
+    int i=0;
+    while(i<1) {
+        int written = write(serverSocket, data, sizeof(data));
+        if(written>0){
+            std::cout << "   Sent " << sent++ << "0\r" << std::flush;
+        } else if(written==-1){
+            if(errno == EWOULDBLOCK || errno == EAGAIN)
+                std::cout << std::endl << "Next write would block" << std::endl;
+            else
+                std::cout << std::endl << "Write went wrong" << std::endl;
+            break;
+        } else {
+            std::cout     << std::endl << "Sent only " << written << " out of 10 bytes" << std::endl;
+            break;
+        }
+        i++;
+    }
 }
