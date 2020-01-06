@@ -9,14 +9,23 @@
 #include "SocketHandler.h"
 #include <string>
 
-class Client: public SocketHandler {
+class Client : public SocketHandler {
 private:
     std::string login;
     int score = 0;
 
 
 public:
-    void handleEvent (uint32_t events) override;
+    void handleEvent(uint32_t events) override;
+
+    // Getters and setters
+    std::string &getLogin();
+
+    void setLogin(std::string &login);
+
+    int getScore();
+
+    void setScore(int score);
 };
 
 

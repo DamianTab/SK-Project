@@ -10,7 +10,7 @@
 #include "SocketHandler.h"
 #include "Client.h"
 
-class Server: public SocketHandler {
+class Server : public SocketHandler {
 private:
     // Epoll socket
     int epollFd;
@@ -19,15 +19,14 @@ private:
 
 public:
     Server();
-    void handleEvent (uint32_t events) override;
+
+    void handleEvent(uint32_t events) override;
 
     void addClient(Client client);
 
     void deleteClient(std::string login);
 
-
-
-
+    // Getters and setters
     std::map<std::string, int> &getUsersMap();
 
     void setUsersMap(std::map<std::string, int> &usersMap);
