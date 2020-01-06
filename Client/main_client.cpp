@@ -71,13 +71,17 @@ void loginServer() {
     char messageBuffer[] = "To jest wiadomosc dla serwera ";
     writeData(serverSocket, messageBuffer, sizeof(messageBuffer));
 
+    printf("-----SLEEP\n");
+    sleep(1);
+
 
 //    Proba zablokowania write
-    char data[10];
+    char data[]={"wiadomosc\n"};
     int sent = 1;
-    while(true) {
+    int i=0;
+    while(i<1) {
         int written = write(serverSocket, data, sizeof(data));
-        if(written==10){
+        if(written>0){
             std::cout << "   Sent " << sent++ << "0\r" << std::flush;
         } else if(written==-1){
             if(errno == EWOULDBLOCK || errno == EAGAIN)
@@ -89,8 +93,6 @@ void loginServer() {
             std::cout     << std::endl << "Sent only " << written << " out of 10 bytes" << std::endl;
             break;
         }
+        i++;
     }
-
-
-
 }

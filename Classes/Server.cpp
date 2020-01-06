@@ -7,6 +7,8 @@
 #include <sys/epoll.h>
 #include <arpa/inet.h>
 
+std::map<std::string, Client *> Server::usersMap;
+
 //Sample message
 char messageBuffer[] = "Please enter unique login: ";
 char successBuffer[] = "Success";
@@ -16,8 +18,19 @@ Server::Server(int argc, char **argv) {
     createServerSocket(argc, argv);
 }
 
+Server::~Server() {
+    auto it = usersMap.begin();
+    while(it!=usersMap.end()){
+        std::pair<std::string, Client*> pair = *it;
+        delete(pair.second);
+        it++;
+    }
+    usersMap.clear();
+}
+
 void Server::handleEvent(uint32_t events) {
-    if(events & EPOLLIN) {
+    if (events & EPOLLIN) {
+        printf("----------------------------------------------------\n");
         int new_connection = accept(fd, NULL, NULL);
         printf("New connection noticed with socket: %d \n", new_connection);
 
@@ -43,40 +56,32 @@ void Server::handleEvent(uint32_t events) {
 //        writeData(new_connection, successBuffer, sizeof(successBuffer));
 //        usersMap.insert(std::pair<std::string, int>(login, new_connection));
 //        printf("New login has been registered: %s \n", login.c_str());
-
+        std::string login = "LOGIN 13452 %$#$";
+        Client *client = new Client(login, new_connection);
+        addClient(client);
     }
-    if(events & ~EPOLLIN){
-        error(0, errno, "Event %x on server socket", events);
+    if (events & ~EPOLLIN) {
+        error(0, errno, "Event %#0x on server socket", events);
         closeServer();
+        delete(this);
         exit(0);
     }
 }
 
 
-void Server::addClient(Client client) {
-    //todo implement
-
+void Server::addClient(Client *client) {
+    usersMap.insert(std::pair<std::string, Client*>(client->getLogin(), client));
 }
 
 void Server::deleteClient(std::string login) {
-    //todo implement
-
+    usersMap.erase(login);
 }
 
-
-int Server::getEpollFd() const {
-    return epollFd;
-}
-
-void Server::setEpollFd(int epollFd) {
-    Server::epollFd = epollFd;
-}
-
-std::map<std::string, int> &Server::getUsersMap() {
+std::map<std::string, Client *> &Server::getUsersMap() {
     return usersMap;
 }
 
-void Server::setUsersMap(std::map<std::string, int> &usersMap) {
+void Server::setUsersMap(std::map<std::string, Client *> &usersMap) {
     Server::usersMap = usersMap;
 }
 
@@ -101,6 +106,5 @@ void Server::createServerSocket(int argc, char **argv) {
 }
 
 void Server::closeServer() {
-    //todo czysczenie mapy
     close(fd);
 }

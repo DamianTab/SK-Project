@@ -37,10 +37,6 @@ void handleEpollEvents(Server *server) {
             server->closeServer();
             exit(0);
         }
-        printf("---------------------------------------\n");
-        if (dynamic_cast<Server *>((SocketHandler *) ee.data.ptr)) {
-            printf("DYNAMIC CAST FOR SERVER DZIALA\n");
-        }
         ((SocketHandler *) ee.data.ptr)->handleEvent(ee.events);
     }
 

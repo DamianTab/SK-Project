@@ -12,32 +12,28 @@
 
 class Server : public SocketHandler {
 private:
-    // Epoll socket
-    int epollFd;
     // Map with user login and socket (FD)
-    std::map<std::string, int> usersMap;
+    static std::map<std::string, Client *> usersMap;
 
     void createServerSocket(int argc, char **argv);
 
 public:
     Server(int argc, char **argv);
 
+    ~Server();
+
     void handleEvent(uint32_t events) override;
 
     void closeServer();
 
-    void addClient(Client client);
+    static void addClient(Client *client);
 
-    void deleteClient(std::string login);
+    static void deleteClient(std::string login);
 
     // Getters and setters
-    std::map<std::string, int> &getUsersMap();
+    std::map<std::string, Client *> &getUsersMap();
 
-    void setUsersMap(std::map<std::string, int> &usersMap);
-
-    int getEpollFd() const;
-
-    void setEpollFd(int epollFd);
+    void setUsersMap(std::map<std::string, Client *> &usersMap);
 };
 
 

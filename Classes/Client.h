@@ -8,20 +8,21 @@
 
 #include "SocketHandler.h"
 #include <string>
+#include <set>
 
 class Client : public SocketHandler {
 private:
     std::string login;
     int score = 0;
-
-
 public:
-    Client();
+    Client(std::string _login, int _fd);
+
+    ~Client();
 
     void handleEvent(uint32_t events) override;
 
     // Getters and setters
-    std::string &getLogin();
+    std::basic_string<char> getLogin();
 
     void setLogin(std::string &login);
 

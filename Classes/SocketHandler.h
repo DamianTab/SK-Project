@@ -10,11 +10,21 @@
 #include <netinet/in.h>
 
 class SocketHandler {
+protected:
+    static int epollFd;
 public:
     int fd;
     sockaddr_in sockAddr;
     virtual void handleEvent (uint32_t events) = 0;
     virtual ~SocketHandler() {}
+
+    int getEpollFd(){
+        return epollFd;
+    }
+
+    void setEpollFd(int _epollFd) {
+        epollFd = _epollFd;
+    }
 };
 
 
