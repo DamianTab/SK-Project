@@ -9,7 +9,7 @@
 
 std::map<std::string, Client *> Server::usersMap;
 
-//Sample message
+//Sample message todo delete
 char messageBuffer[] = "Please enter unique login: ";
 char successBuffer[] = "Success";
 
@@ -58,33 +58,30 @@ void Server::handleEvent(uint32_t events) {
 //        printf("New login has been registered: %s \n", login.c_str());
         std::string login = "LOGIN 13452 %$#$";
         Client *client = new Client(login, new_connection);
-        addClient(client);
+        addClientToMap(client);
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#0x on server socket", events);
         closeServer();
-        delete(this);
         exit(0);
     }
 }
 
 
-void Server::addClient(Client *client) {
+void Server::addClientToMap(Client *client) {
     usersMap.insert(std::pair<std::string, Client*>(client->getLogin(), client));
 }
 
-void Server::deleteClient(std::string login) {
+void Server::deleteClientFromMap(std::string login) {
     usersMap.erase(login);
 }
 
-std::map<std::string, Client *> &Server::getUsersMap() {
-    return usersMap;
+void Server::closeServer() {
+    close(fd);
+    delete this;
 }
 
-void Server::setUsersMap(std::map<std::string, Client *> &usersMap) {
-    Server::usersMap = usersMap;
-}
-
+//private
 void Server::createServerSocket(int argc, char **argv) {
     sockAddr = {
             .sin_family = AF_INET,
@@ -100,11 +97,16 @@ void Server::createServerSocket(int argc, char **argv) {
     int res = setsockopt(fd, SOL_SOCKET, SO_REUSEADDR, &one, sizeof(one));
     if (res) error(1, errno, "setsockopt failed");
 
-
     if (bind(fd, (sockaddr *) &sockAddr, sizeof(sockAddr)))
         error(1, errno, "Failed to bind server address!\n");
 }
 
-void Server::closeServer() {
-    close(fd);
+
+// Getters and setters
+std::map<std::string, Client *> &Server::getUsersMap() {
+    return usersMap;
+}
+
+void Server::setUsersMap(std::map<std::string, Client *> &usersMap) {
+    Server::usersMap = usersMap;
 }

@@ -15,6 +15,7 @@ Client::Client(std::string _login, int _fd) {
 }
 
 Client::~Client() {
+    Server::deleteClientFromMap(login);
     epoll_ctl(epollFd, EPOLL_CTL_DEL, fd, nullptr);
     shutdown(fd, SHUT_RDWR);
     close(fd);
@@ -29,12 +30,8 @@ void Client::handleEvent(uint32_t events) {
         }
         else events |= EPOLLERR;
     }
-    if (events & EPOLLOUT) {
-        printf("++++++++++++++ UWAGA EPOLLOUT");
-    }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#04x on client socket %d with login: '%s'. Disconnect client ...", events, fd, login.c_str());
-        Server::deleteClient(login);
         delete(this);
     }
 

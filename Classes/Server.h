@@ -26,9 +26,9 @@ public:
 
     void closeServer();
 
-    static void addClient(Client *client);
+    static void addClientToMap(Client *client);
 
-    static void deleteClient(std::string login);
+    static void deleteClientFromMap(std::string login);
 
     // Getters and setters
     std::map<std::string, Client *> &getUsersMap();

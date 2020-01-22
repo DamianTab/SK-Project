@@ -3,21 +3,30 @@
 #include <error.h>
 #include <sys/epoll.h>
 #include <Classes/Server.h>
+#include <csignal>
 
 using namespace std;
 
 //Functions
 void handleEpollEvents(Server *server);
+void ctrl_c(int);
+
+Server *server;
 
 int main(int argc, char **argv) {
     if (argc != 3)
         error(1, 0, "To correctly run type: %s <IP adress> <port>\n", argv[0]);
 
-    Server *server = new Server(argc, argv);
+    server = new Server(argc, argv);
 
     int res = listen(server->fd, SOMAXCONN);
     if (res)
         error(1, errno, "Failed to execute 'listen'\n");
+
+    // graceful ctrl+c exit
+    signal(SIGINT, ctrl_c);
+    // prevent dead sockets from throwing pipe errors on write
+    signal(SIGPIPE, SIG_IGN);
 
     server->setEpollFd(epoll_create1(0));
     epoll_event ee{EPOLLIN, {.ptr=server}};
@@ -41,3 +50,11 @@ void handleEpollEvents(Server *server) {
     }
 
 }
+
+
+void ctrl_c(int){
+    server->closeServer();
+    printf("\nClosing server - caused by ctrl_c\n");
+    exit(0);
+}
+
