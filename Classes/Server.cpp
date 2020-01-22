@@ -34,7 +34,7 @@ void Server::handleEvent(uint32_t events) {
         int new_connection = accept(fd, NULL, NULL);
         printf("New connection noticed with socket: %d \n", new_connection);
 
-        writeData(new_connection, messageBuffer, sizeof(messageBuffer));
+        writeData(new_connection, messageBuffer,-1);
 
         char duzybufor[BUFFER_SIZE];
         int x = read(new_connection, duzybufor, BUFFER_SIZE);

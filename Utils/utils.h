@@ -10,9 +10,11 @@
 #include <error.h>
 
 #define BUFFER_SIZE 255
+#define HEADER_SIZE 8
 
-int readData(int fd, char * buffer, int buffsize);
-void writeData(int fd, char * buffer, int count);
+
+int readData(int fd, char * buffer, int* round);
+void writeData(int fd, char * buffer, int round);
 
 
 #endif //SK_PROJECT_UTILS_H

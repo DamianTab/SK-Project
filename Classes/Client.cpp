@@ -22,11 +22,13 @@ Client::~Client() {
 }
 
 void Client::handleEvent(uint32_t events) {
+    int *round=0;
+
     if (events & EPOLLIN) {
         char buffer[BUFFER_SIZE];
-        int count = readData(fd, buffer, sizeof(buffer));
+        int count = readData(fd, buffer, round);
         if (count > 0){
-            writeData(1, buffer, count);
+            writeData(1, buffer, -1);
         }
         else events |= EPOLLERR;
     }

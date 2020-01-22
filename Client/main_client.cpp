@@ -40,6 +40,9 @@ void createSocketAndConnect(int argc, char **argv) {
 }
 
 void loginServer() {
+    int *round = 0;
+
+
 //    std::string response;
 //    int bytes;
 //
@@ -64,35 +67,16 @@ void loginServer() {
 
 
     char duzybufor[BUFFER_SIZE];
-    int x = read(serverSocket, duzybufor, BUFFER_SIZE);
+    int x = readData(serverSocket, duzybufor, round);
     perror("Reading from socket");
     printf("\n%d Data: %s\n", x, duzybufor);
 
     char messageBuffer[] = "To jest wiadomosc dla serwera ";
-    writeData(serverSocket, messageBuffer, sizeof(messageBuffer));
+    writeData(serverSocket, messageBuffer, *round);
 
     printf("-----SLEEP\n");
     sleep(1);
 
-
-//    Proba zablokowania write
     char data[]={"wiadomosc\n"};
-    int sent = 1;
-    int i=0;
-    while(i<1) {
-        int written = write(serverSocket, data, sizeof(data));
-        if(written>0){
-            std::cout << "   Sent " << sent++ << "0\r" << std::flush;
-        } else if(written==-1){
-            if(errno == EWOULDBLOCK || errno == EAGAIN)
-                std::cout << std::endl << "Next write would block" << std::endl;
-            else
-                std::cout << std::endl << "Write went wrong" << std::endl;
-            break;
-        } else {
-            std::cout     << std::endl << "Sent only " << written << " out of 10 bytes" << std::endl;
-            break;
-        }
-        i++;
-    }
+    write(serverSocket, data, sizeof(data));
 }
