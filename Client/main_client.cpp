@@ -40,7 +40,7 @@ void createSocketAndConnect(int argc, char **argv) {
 }
 
 void loginServer() {
-    int *round = 0;
+    int round = 0;
 
 
 //    std::string response;
@@ -67,16 +67,21 @@ void loginServer() {
 
 
     char duzybufor[BUFFER_SIZE];
-    int x = readData(serverSocket, duzybufor, round);
+    int x = readData(serverSocket, duzybufor, &round);
     perror("Reading from socket");
-    printf("\n%d Data: %s\n", x, duzybufor);
+    printf("\n%d Data: %s TO JEST ROUND %d\n", x, duzybufor, round);
 
     char messageBuffer[] = "To jest wiadomosc dla serwera ";
-    writeData(serverSocket, messageBuffer, *round);
+    writeData(serverSocket, messageBuffer, round);
 
     printf("-----SLEEP\n");
-    sleep(1);
+    sleep(3);
 
-    char data[]={"wiadomosc\n"};
-    write(serverSocket, data, sizeof(data));
+//    char data[]={"wiadomosc\n"};
+//    writeData(serverSocket, data, round);
+
+//    duzybufor[BUFFER_SIZE] = {0};
+//    x = readData(serverSocket, duzybufor, &round);
+//    perror("Reading from socket");
+//    printf("\n%d Data: %s TO JEST ROUND %d\n", x, duzybufor, round);
 }

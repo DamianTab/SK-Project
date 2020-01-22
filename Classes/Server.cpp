@@ -20,25 +20,28 @@ Server::Server(int argc, char **argv) {
 
 Server::~Server() {
     auto it = usersMap.begin();
-    while(it!=usersMap.end()){
-        std::pair<std::string, Client*> pair = *it;
-        delete(pair.second);
+    while (it != usersMap.end()) {
+        std::pair<std::string, Client *> pair = *it;
+        delete (pair.second);
         it++;
     }
     usersMap.clear();
 }
 
 void Server::handleEvent(uint32_t events) {
+    int round = 0;
+
     if (events & EPOLLIN) {
         printf("----------------------------------------------------\n");
         int new_connection = accept(fd, NULL, NULL);
         printf("New connection noticed with socket: %d \n", new_connection);
 
-        writeData(new_connection, messageBuffer,-1);
+        writeData(new_connection, messageBuffer, 100);
 
         char duzybufor[BUFFER_SIZE];
-        int x = read(new_connection, duzybufor, BUFFER_SIZE);
-        printf("\n%d Data: %s\n", x, duzybufor);
+        int x = readData(new_connection, duzybufor, &round);
+        printf("\n%d Data: %s ROUND: %d\n", x, duzybufor, round);
+        printf("cos1");
 
 //        char tempBuffer[BUFFER_SIZE];
 //        std::string login;
@@ -56,9 +59,11 @@ void Server::handleEvent(uint32_t events) {
 //        writeData(new_connection, successBuffer, sizeof(successBuffer));
 //        usersMap.insert(std::pair<std::string, int>(login, new_connection));
 //        printf("New login has been registered: %s \n", login.c_str());
+        printf("cos1");
         std::string login = "LOGIN 13452 %$#$";
         Client *client = new Client(login, new_connection);
         addClientToMap(client);
+        printf("cos2");
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#0x on server socket", events);
@@ -69,7 +74,7 @@ void Server::handleEvent(uint32_t events) {
 
 
 void Server::addClientToMap(Client *client) {
-    usersMap.insert(std::pair<std::string, Client*>(client->getLogin(), client));
+    usersMap.insert(std::pair<std::string, Client *>(client->getLogin(), client));
 }
 
 void Server::deleteClientFromMap(std::string login) {

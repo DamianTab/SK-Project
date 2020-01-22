@@ -22,21 +22,20 @@ Client::~Client() {
 }
 
 void Client::handleEvent(uint32_t events) {
-    int *round=0;
-
+    int round=0;
     if (events & EPOLLIN) {
         char buffer[BUFFER_SIZE];
-        int count = readData(fd, buffer, round);
+        int count = readData(fd, buffer, &round);
         if (count > 0){
-            writeData(1, buffer, -1);
+            printf("JAKAS WIADOMOSC PO DOLACZENIU: %s", buffer);
         }
         else events |= EPOLLERR;
+        printf("cos3");
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#04x on client socket %d with login: '%s'. Disconnect client ...", events, fd, login.c_str());
         delete(this);
     }
-
 }
 
 // Getters and setters

@@ -9,9 +9,33 @@
 
 
 int readData(int fd, char *buffer, int *round) {
-    int bytes = read(fd, buffer, sizeof(buffer));
+
+    char tempBuffer[BUFFER_SIZE];
+    int bytes = read(fd, tempBuffer, sizeof(tempBuffer));
     if (bytes == -1) error(1, errno, "Read failed on descriptor %d\n", fd);
-    return bytes;
+    printf("TO JEST WLASNIE WIADOMOSC: %s\n", tempBuffer);
+    std::string str(tempBuffer);
+    std::string header = str.substr(0, HEADER_SIZE);
+    std::string message = str.substr(HEADER_SIZE, strlen(tempBuffer) - HEADER_SIZE);
+
+//    Delete '0' before number of game round
+    while(header[0] == '0'){
+        header.erase(header.begin());
+    }
+//    Delete :: after number
+    header.erase(header.size() - 2, 2);
+//    Return round value by pointer
+    *round = std::stoi(header);
+
+//    printf("TO JEST WLASNIE WIADOMOSC: %s\n", str.c_str());
+//    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(str.c_str()));
+//    printf("TO JEST WLASNIE WIADOMOSC: %s\n", header.c_str());
+//    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(header.c_str()));
+//    printf("TO JEST WLASNIE WIADOMOSC: %s\n", message.c_str());
+//    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(message.c_str()));
+
+    strcpy(buffer, message.c_str());
+    return bytes-HEADER_SIZE;
 }
 
 void writeData(int fd, char *buffer, int round) {
@@ -28,12 +52,11 @@ void writeData(int fd, char *buffer, int round) {
     for (int i = 0; i < strlen(pchar); ++i) {
         header[HEADER_SIZE-2 + i - strlen(pchar)] = pchar[i];
     }
-    printf("TO JEST PO header: %s\n", header);
-
+//    printf("TO JEST PO header: %s\n", header);
     strcpy(message, header);
     strcat(message, buffer);
-    printf("TO JEST WLASNIE WIADOMOSC: %s\n", message);
-    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(message));
+//    printf("TO JEST WLASNIE WIADOMOSC: %s\n", message);
+//    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(message));
     int bytes = write(fd, message, strlen(message));
     if (bytes == -1) error(1, errno, "Write failed on descriptor %d\n", fd);
     if (bytes != strlen(message)) error(0, errno, "Wrote less than requested to descriptor %d (%d/%zu)\n", fd, bytes, strlen(message));
