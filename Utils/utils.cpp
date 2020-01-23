@@ -55,7 +55,7 @@ void writeData(int fd, char *buffer, int round) {
 //    printf("TO JEST wielkosc INT: %zu\n", strlen(pchar));
 //    printf("TO JEST PRZED header: %s\n", header);
 //    printf("TO JEST HEADER: %zu\n", strlen(header));
-    for (int i = 0; i < strlen(pchar); ++i) {
+    for (int i = 0; i < (int) strlen(pchar); ++i) {
         header[HEADER_SIZE-2 + i - strlen(pchar)] = pchar[i];
     }
 //    printf("TO JEST PO header: %s\n", header);
@@ -65,7 +65,7 @@ void writeData(int fd, char *buffer, int round) {
 //    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(message));
     int bytes = write(fd, message, strlen(message));
     if (bytes == -1) error(0, errno, "Write failed on descriptor %d\n", fd);
-    if (bytes != strlen(message)) error(0, errno, "Wrote less than requested to descriptor %d (%d/%zu)\n", fd, bytes, strlen(message));
+    if (bytes != (int) strlen(message)) error(0, errno, "Wrote less than requested to descriptor %d (%d/%zu)\n", fd, bytes, strlen(message));
 }
 
 bool isCorrectRound(int expected, int actual) {

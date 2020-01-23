@@ -20,7 +20,7 @@ private:
 public:
     Server(int argc, char **argv);
 
-    ~Server();
+    ~Server() override;
 
     void handleEvent(uint32_t events) override;
 
@@ -31,9 +31,9 @@ public:
     static void deleteClientFromMap(std::string login);
 
     // Getters and setters
-    std::map<std::string, Client *> &getUsersMap();
+    static std::map<std::string, Client *> &getUsersMap();
 
-    void setUsersMap(std::map<std::string, Client *> &usersMap);
+    static void setUsersMap(std::map<std::string, Client *> &usersMap);
 };
 
 

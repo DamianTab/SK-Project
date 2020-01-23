@@ -80,6 +80,9 @@ void loginServer() {
     char messageBuffer1[] = "TO JEST NUMER 2";
     writeData(serverSocket, messageBuffer1, round);
 
+    sleep(1);
+
+
 //    duzybufor[BUFFER_SIZE] = {0};
 //    x = readData(serverSocket, duzybufor, &round);
 //    perror("Reading from socket");

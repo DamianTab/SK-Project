@@ -9,17 +9,21 @@
 #include "SocketHandler.h"
 #include <string>
 #include <set>
+#include <vector>
 
 class Client : public SocketHandler {
 private:
     std::string login;
-    int score = 0;
+    int totalScore = 0;
 public:
     Client(std::string _login, int _fd);
 
-    ~Client();
+    ~Client() override;
 
     void handleEvent(uint32_t events) override;
+
+    std::vector < std::string > lastAnswers;
+    std::vector < int > lastScore;
 
     // Getters and setters
     std::basic_string<char> getLogin();

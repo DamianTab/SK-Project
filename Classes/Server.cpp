@@ -3,6 +3,7 @@
 //
 
 #include "Server.h"
+#include "Game.h"
 #include <Utils/utils.h>
 #include <sys/epoll.h>
 #include <arpa/inet.h>
@@ -29,7 +30,7 @@ Server::~Server() {
 }
 
 void Server::handleEvent(uint32_t events) {
-    int round = 0;
+    int roundValue = 0;
 
     if (events & EPOLLIN) {
         printf("----------------------------------------------------\n");
@@ -39,10 +40,8 @@ void Server::handleEvent(uint32_t events) {
         writeData(new_connection, messageBuffer, 0);
 
         char duzybufor[BUFFER_SIZE];
-        int x = readData(new_connection, duzybufor, &round);
-        printf("\n%d Data: %s ROUND: %d\n", x, duzybufor, round);
-
-        isCorrectRound(-2,round);
+        int x = readData(new_connection, duzybufor, &roundValue);
+        printf("\n%d Data: %s ROUND: %d\n", x, duzybufor, roundValue);
 
 //        char tempBuffer[BUFFER_SIZE];
 //        std::string login;
@@ -63,6 +62,11 @@ void Server::handleEvent(uint32_t events) {
         std::string login = "LOGIN 13452 %$#$";
         Client *client = new Client(login, new_connection);
         addClientToMap(client);
+
+//        If condition are true then starts new thread
+        if (Game::getRound() == 0 && usersMap.size() >=2){
+            new Game();
+        }
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#0x on server socket", events);
