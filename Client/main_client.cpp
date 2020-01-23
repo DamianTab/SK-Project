@@ -40,30 +40,52 @@ void createSocketAndConnect(int argc, char **argv) {
 
 void loginServer() {
     int round = 0;
+    string message;
 
-    char duzybufor[BUFFER_SIZE];
-    int x = readData(serverSocket, duzybufor, &round);
-    perror("Reading from socket");
-    printf("\n%d Data: %s TO JEST ROUND %d\n", x, duzybufor, round);
+
+    char buffer[BUFFER_SIZE];
+    int bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s \n",message.c_str());
+
+    bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s \n",message.c_str());
 
     char messageBuffer[] = "MojLogin";
     writeData(serverSocket, messageBuffer, round);
+//    sleep(1);
+
+    bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s",message.c_str());
+
 
     printf("-----SLEEP\n");
-    sleep(1);
+//    sleep(2);
 
-    char messageBuffer1[] = "LOGIN2";
-    writeData(serverSocket, messageBuffer1, round);
+//    PO ROZPOCZECIU GRY --- PROBA WYSLANIA ODPOWIEDZI NA LITERKE
 
-    sleep(10);
+    bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s (ROUND '%d')\n",message.c_str(), round);
 
-//    TERAZ PROBA WYSLANIA ODPOWIEDZI NA LITERKE
+    bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s (ROUND '%d')\n",message.c_str(), round);
 
+    bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s (ROUND '%d')\n",message.c_str(), round);
 
-
-
-//    duzybufor[BUFFER_SIZE] = {0};
-//    x = readData(serverSocket, duzybufor, &round);
-//    perror("Reading from socket");
-//    printf("\n%d Data: %s TO JEST ROUND %d\n", x, duzybufor, round);
+    bytes = readData(serverSocket, buffer, &round);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s (ROUND '%d')\n",message.c_str(), round);
 }

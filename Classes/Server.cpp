@@ -13,7 +13,7 @@ std::map<std::string, Client *> Server::usersMap;
 
 char welcomeMessage[] = "Welcome in Country-Capitals Game !!!\n";
 char loginMessage[] = "Please enter unique login: \n";
-char successMessage[] = "Success";
+char successMessage[] = "Success\n";
 
 Server::Server(int argc, char **argv) {
     usersMap.clear();
@@ -47,6 +47,9 @@ void Server::handleEvent(uint32_t events) {
             int bytes = readData(new_connection, receiveBuffer, &roundValue);
             login = std::string(receiveBuffer);
             login = login.substr(0,bytes);
+
+            //todo usunac
+            login = login + std::to_string(rand());
         } while (usersMap.find(login) != usersMap.end());
 
         Client *client = new Client(login, new_connection);
@@ -69,10 +72,9 @@ void Server::handleEvent(uint32_t events) {
 
 void Server::sendToAllClients(char *buffer) {
     for (const auto &kv : Server::getUsersMap()) {
-        kv.second->lastAnswers.clear();
-        kv.second->lastScore.clear();
-        kv.second->setScore(0);
+        writeData(kv.second->fd, buffer, Game::getRound(), false);
     }
+    sleep(SLEEP_WRITE_TO_ALL);
 }
 
 

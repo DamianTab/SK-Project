@@ -4,10 +4,17 @@
 
 #include <Utils/utils.h>
 #include <thread>
+#include <cstring>
 #include "Game.h"
 #include "Server.h"
 
 int Game::round;
+
+char startMessage[] = "The new game has started !!!";
+char drawMessage[] = "Drawing new letter ...";
+char letterMessage[] = "New letter is : ";
+char roundMessage[] = "Starting round: ";
+char endMessage[] = "The game has ended. Not enough players to to continue :( ";
 
 Game::Game() {
     printf("++++ Starting new game ... \n");
@@ -22,11 +29,35 @@ Game::~Game() {
 }
 
 void Game::run() {
-    round++;
-    while(Server::getUsersMap().size() >= 2){
-        sleep(SLEEP_TIME);
-        round++;
+    srand (time(NULL));
+    char buffer[BUFFER_SIZE];
+    std::string tempString;
+
+//    Sending greetings
+    Server::sendToAllClients(startMessage);
+    while (Server::getUsersMap().size() >= 2) {
+        drawLetter();
+        printf("++++ Drawn letter: %c ... \n", letter);
+
+//        Sending letter message
+        tempString = std::string(letterMessage);
+        tempString += letter;
+        strcpy(buffer, tempString.c_str());
+        Server::sendToAllClients(buffer);
+
+//        Sending round number (to user view)
+        tempString = std::string(roundMessage) + std::to_string(++round);
+        strcpy(buffer, tempString.c_str());
+        Server::sendToAllClients(buffer);
+
+        sleep(SERVER_ROUND_TIME);
+
+        printf("++++ End of round: %d ... \n", round);
+
     }
+
+    //        Sending farewell mesage (to user view)
+    Server::sendToAllClients(endMessage);
     delete this;
 }
 
@@ -48,4 +79,8 @@ void Game::clearClientsPoints() {
         kv.second->lastScore.clear();
         kv.second->setScore(0);
     }
+}
+
+void Game::drawLetter() {
+    letter = rand() % 26 + 97;
 }

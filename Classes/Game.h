@@ -8,9 +8,13 @@
 
 class Game {
 private:
+    char letter;
+
     static int round;
 
     void clearClientsPoints();
+
+    void drawLetter();
 
 public:
 

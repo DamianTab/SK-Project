@@ -45,7 +45,7 @@ int readData(int fd, char *buffer, int *round) {
     return bytes-HEADER_SIZE;
 }
 
-void writeData(int fd, char *buffer, int round) {
+void writeData(int fd, char *buffer, int round, bool shouldSleep) {
 
     char header[HEADER_SIZE] = {'0', '0', '0', '0', '0', '0', ':', ':'};
     char message [strlen(buffer) + HEADER_SIZE];
@@ -67,6 +67,9 @@ void writeData(int fd, char *buffer, int round) {
     int bytes = write(fd, message, strlen(message));
     if (bytes == -1) error(0, errno, "Write failed on descriptor %d\n", fd);
     if (bytes != (int) strlen(message)) error(0, errno, "Wrote less than requested to descriptor %d (%d/%zu)\n", fd, bytes, strlen(message));
+    if (shouldSleep){
+        sleep(SLEEP_WRITE);
+    }
 }
 
 bool isCorrectRound(int expected, int actual) {
