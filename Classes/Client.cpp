@@ -27,10 +27,10 @@ void Client::handleEvent(uint32_t events) {
         char buffer[BUFFER_SIZE];
         int count = readData(fd, buffer, &round);
         if (count > 0){
-            printf("JAKAS WIADOMOSC PO DOLACZENIU: %s", buffer);
+            printf("JAKAS WIADOMOSC PO DOLACZENIU: %s \n", buffer);
         }
         else events |= EPOLLERR;
-        printf("cos3");
+        printf("koniec handle event CLIENT\n");
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#04x on client socket %d with login: '%s'. Disconnect client ...", events, fd, login.c_str());

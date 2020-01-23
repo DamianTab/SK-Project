@@ -77,8 +77,8 @@ void loginServer() {
     printf("-----SLEEP\n");
     sleep(3);
 
-//    char data[]={"wiadomosc\n"};
-//    writeData(serverSocket, data, round);
+    char messageBuffer1[] = "TO JEST NUMER 2";
+    writeData(serverSocket, messageBuffer1, round);
 
 //    duzybufor[BUFFER_SIZE] = {0};
 //    x = readData(serverSocket, duzybufor, &round);

@@ -12,8 +12,8 @@ int readData(int fd, char *buffer, int *round) {
 
     char tempBuffer[BUFFER_SIZE];
     int bytes = read(fd, tempBuffer, sizeof(tempBuffer));
-    if (bytes == -1) error(1, errno, "Read failed on descriptor %d\n", fd);
-    printf("TO JEST WLASNIE WIADOMOSC: %s\n", tempBuffer);
+    if (bytes == -1) error(0, errno, "Read failed on descriptor %d\n", fd);
+//    printf("TO JEST WLASNIE WIADOMOSC: %s\n", tempBuffer);
     std::string str(tempBuffer);
     std::string header = str.substr(0, HEADER_SIZE);
     std::string message = str.substr(HEADER_SIZE, strlen(tempBuffer) - HEADER_SIZE);
@@ -22,10 +22,16 @@ int readData(int fd, char *buffer, int *round) {
     while(header[0] == '0'){
         header.erase(header.begin());
     }
-//    Delete :: after number
-    header.erase(header.size() - 2, 2);
-//    Return round value by pointer
-    *round = std::stoi(header);
+
+    if (header[0] != ':'){
+        //    Delete :: after number
+        header.erase(header.size() - 2, 2);
+        //    Return round value by pointer
+        *round = std::stoi(header);
+    }else{
+        *round = 0;
+    }
+
 
 //    printf("TO JEST WLASNIE WIADOMOSC: %s\n", str.c_str());
 //    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(str.c_str()));
@@ -58,6 +64,17 @@ void writeData(int fd, char *buffer, int round) {
 //    printf("TO JEST WLASNIE WIADOMOSC: %s\n", message);
 //    printf("TO JEST wielkosc WIADOMOSCI: %zu\n", strlen(message));
     int bytes = write(fd, message, strlen(message));
-    if (bytes == -1) error(1, errno, "Write failed on descriptor %d\n", fd);
+    if (bytes == -1) error(0, errno, "Write failed on descriptor %d\n", fd);
     if (bytes != strlen(message)) error(0, errno, "Wrote less than requested to descriptor %d (%d/%zu)\n", fd, bytes, strlen(message));
+}
+
+bool isCorrectRound(int expected, int actual) {
+    if( actual == 0){
+        error(0, errno, "Critical Error ! Round number is 0. Communication between sockets is broken !\n");
+        return false;
+    } else if (expected != actual){
+        error(0, errno, "Error ! Round number not matching actual value. It is %d but should be %d.\n", actual, expected);
+        return false;
+    }
+    return true;
 }

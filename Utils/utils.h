@@ -15,7 +15,7 @@
 
 int readData(int fd, char * buffer, int* round);
 void writeData(int fd, char * buffer, int round);
-
+bool isCorrectRound(int expected, int actual);
 
 #endif //SK_PROJECT_UTILS_H
 
