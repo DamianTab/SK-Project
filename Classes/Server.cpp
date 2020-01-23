@@ -46,7 +46,7 @@ void Server::handleEvent(uint32_t events) {
             writeData(new_connection, loginMessage, CONNECTION_ROUND_VALUE);
             int bytes = readData(new_connection, receiveBuffer, &roundValue);
             login = std::string(receiveBuffer);
-            login = login.substr(0,bytes);
+            login = login.substr(0, bytes);
 
             //todo usunac
             login = login + std::to_string(rand());
@@ -58,7 +58,7 @@ void Server::handleEvent(uint32_t events) {
         writeData(new_connection, successMessage, CONNECTION_ROUND_VALUE);
 
 //        If condition are true then starts new thread and the game begins
-        if (Game::getRound() == 0 && usersMap.size() >=2){
+        if (Game::getRound() == 0 && usersMap.size() >= MINIMUM_PLAYERS_NUMBER) {
             new Game();
         }
     }

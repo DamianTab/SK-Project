@@ -24,6 +24,7 @@ Client::~Client() {
 
 void Client::handleEvent(uint32_t events) {
     int roundValue = 0;
+    std::string message;
 //    todo nie wiem czy to dobrze ze w tej kolejnosci
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#04x on client socket %d with login: '%s'. Disconnect client ...", events, fd,
@@ -31,13 +32,17 @@ void Client::handleEvent(uint32_t events) {
         delete (this);
     } else if (events & EPOLLIN) {
         char buffer[BUFFER_SIZE];
-        int count = readData(fd, buffer, &roundValue);
-//        If there is data in buffer and the game already has stared
-        if (count > 0 && Game::getRound() != 0) {
+        int bytes = readData(fd, buffer, &roundValue);
+//        Pass only if there is data in buffer and the game already has stared
+        if (bytes > 0 && Game::getRound() != 0) {
             if (!isCorrectRound(Game::getRound(), roundValue)) {
                 error(0, errno, "Aborting invalid message from client '%s' with fd %d !\n", login.c_str(), fd);
             } else {
-                printf("JAKAS WIADOMOSC PO DOLACZENIU: %s \n", buffer);
+                message = std::string(buffer);
+                message = message.substr(0, bytes);
+                printf("OTRZYMANA WIADOMOSC OD KLIENTA: %s \n", message.c_str());
+                extractPhrase(message, lastAnswers);
+                Game::pushClientToTimeRankingWhenPossible(this);
             }
         }
     }

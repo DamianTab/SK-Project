@@ -12,6 +12,7 @@ int serverSocket;
 
 //Functions
 void createSocketAndConnect(int argc, char **argv);
+
 void loginServer();
 
 int main(int argc, char **argv) {
@@ -26,7 +27,6 @@ int main(int argc, char **argv) {
     close(serverSocket);
     return 0;
 }
-
 
 void createSocketAndConnect(int argc, char **argv) {
     sockaddr_in serverAdress;
@@ -47,45 +47,41 @@ void loginServer() {
     int bytes = readData(serverSocket, buffer, &round);
     message = std::string(buffer);
     message = message.substr(0, bytes);
-    printf("%s \n",message.c_str());
+    printf("%s \n", message.c_str());
 
     bytes = readData(serverSocket, buffer, &round);
     message = std::string(buffer);
     message = message.substr(0, bytes);
-    printf("%s \n",message.c_str());
+    printf("%s \n", message.c_str());
 
     char messageBuffer[] = "MojLogin";
     writeData(serverSocket, messageBuffer, round);
-//    sleep(1);
 
     bytes = readData(serverSocket, buffer, &round);
     message = std::string(buffer);
     message = message.substr(0, bytes);
-    printf("%s",message.c_str());
+    printf("%s", message.c_str());
 
-
-    printf("-----SLEEP\n");
-//    sleep(2);
+    printf("----- POPRAWNA AUTORYZACJA\n");
 
 //    PO ROZPOCZECIU GRY --- PROBA WYSLANIA ODPOWIEDZI NA LITERKE
 
     bytes = readData(serverSocket, buffer, &round);
     message = std::string(buffer);
     message = message.substr(0, bytes);
-    printf("%s (ROUND '%d')\n",message.c_str(), round);
+    printf("%s (ROUND '%d')\n", message.c_str(), round);
 
-    bytes = readData(serverSocket, buffer, &round);
-    message = std::string(buffer);
-    message = message.substr(0, bytes);
-    printf("%s (ROUND '%d')\n",message.c_str(), round);
+    while (1){
+        for (int i = 0; i < 2; ++i) {
+            bytes = readData(serverSocket, buffer, &round);
+            message = std::string(buffer);
+            message = message.substr(0, bytes);
+            printf("%s (ROUND '%d')\n", message.c_str(), round);
+        }
+        sleep(2);
 
-    bytes = readData(serverSocket, buffer, &round);
-    message = std::string(buffer);
-    message = message.substr(0, bytes);
-    printf("%s (ROUND '%d')\n",message.c_str(), round);
-
-    bytes = readData(serverSocket, buffer, &round);
-    message = std::string(buffer);
-    message = message.substr(0, bytes);
-    printf("%s (ROUND '%d')\n",message.c_str(), round);
+//        char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ,loląń, CO KOLWIEK";
+        char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ";
+        writeData(serverSocket, messageBuffer, round);
+    }
 }

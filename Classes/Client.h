@@ -10,6 +10,8 @@
 #include <string>
 #include <set>
 #include <vector>
+#include <Utils/utils.h>
+
 
 class Client : public SocketHandler {
 private:
@@ -22,8 +24,8 @@ public:
 
     void handleEvent(uint32_t events) override;
 
-    std::vector < std::string > lastAnswers;
-    std::vector < int > lastScore;
+    std::string lastAnswers [GAME_WORDS_AMOUNT] ;
+    int lastScore [GAME_WORDS_AMOUNT];
 
     // Getters and setters
     std::basic_string<char> getLogin();
