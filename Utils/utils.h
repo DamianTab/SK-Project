@@ -12,6 +12,7 @@
 #define BUFFER_SIZE 255
 #define HEADER_SIZE 8
 #define SLEEP_TIME 10
+#define CONNECTION_ROUND_VALUE -1
 
 
 int readData(int fd, char * buffer, int* round);

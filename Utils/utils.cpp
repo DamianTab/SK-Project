@@ -2,13 +2,14 @@
 // Created by dejmian on 05.01.2020.
 //
 
-#include <cstdio>
 #include <cstring>
 #include "utils.h"
 #include "string"
 
 
 int readData(int fd, char *buffer, int *round) {
+
+    //todo delete printf
 
     char tempBuffer[BUFFER_SIZE];
     int bytes = read(fd, tempBuffer, sizeof(tempBuffer));
@@ -73,7 +74,7 @@ bool isCorrectRound(int expected, int actual) {
         error(0, errno, "Critical Error ! Round number is 0. Communication between sockets is broken !\n");
         return false;
     } else if (expected != actual){
-        error(0, errno, "Error ! Round number not matching actual value. It is %d but should be %d.\n", actual, expected);
+        error(0, errno, "Error ! Round number not matching actual value. Received %d but actual is %d.\n", actual, expected);
         return false;
     }
     return true;

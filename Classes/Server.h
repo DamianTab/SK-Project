@@ -30,6 +30,8 @@ public:
 
     static void deleteClientFromMap(std::string login);
 
+    static void sendToAllClients(char * buffer);
+
     // Getters and setters
     static std::map<std::string, Client *> &getUsersMap();
 

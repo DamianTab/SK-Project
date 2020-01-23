@@ -10,6 +10,7 @@
 int Game::round;
 
 Game::Game() {
+    printf("++++ Starting new game ... \n");
     clearClientsPoints();
     std::thread t1(&Game::run, this);
     t1.detach();
@@ -17,7 +18,7 @@ Game::Game() {
 
 Game::~Game() {
     clearClientsPoints();
-
+    printf("++++ The game has ended ... \n");
 }
 
 void Game::run() {

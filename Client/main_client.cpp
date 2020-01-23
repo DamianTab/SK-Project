@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <error.h>
-#include <cstring>
 #include <Utils/utils.h>
 
 using namespace std;
@@ -42,45 +41,25 @@ void createSocketAndConnect(int argc, char **argv) {
 void loginServer() {
     int round = 0;
 
-
-//    std::string response;
-//    int bytes;
-//
-//    do {
-//        char welcomeMessage[BUFFER_SIZE];
-//        bytes = readData(serverSocket, welcomeMessage, sizeof(welcomeMessage));
-//        writeData(1, welcomeMessage, bytes);
-//
-//        string login;
-//        cin >> login;
-//        char tempBuffer[login.size()+1];
-//        strcpy(tempBuffer, login.c_str());
-//        writeData(serverSocket, tempBuffer, sizeof(tempBuffer));
-//
-//        bytes = readData(serverSocket, welcomeMessage, sizeof(welcomeMessage));
-//        string response(welcomeMessage);
-//
-//        //todo usunac
-//        writeData(1, welcomeMessage, sizeof(welcomeMessage));
-//    } while (response != "Success");
-
-
-
     char duzybufor[BUFFER_SIZE];
     int x = readData(serverSocket, duzybufor, &round);
     perror("Reading from socket");
     printf("\n%d Data: %s TO JEST ROUND %d\n", x, duzybufor, round);
 
-    char messageBuffer[] = "To jest wiadomosc dla serwera ";
+    char messageBuffer[] = "MojLogin";
     writeData(serverSocket, messageBuffer, round);
 
     printf("-----SLEEP\n");
-    sleep(3);
+    sleep(1);
 
-    char messageBuffer1[] = "TO JEST NUMER 2";
+    char messageBuffer1[] = "LOGIN2";
     writeData(serverSocket, messageBuffer1, round);
 
-    sleep(1);
+    sleep(10);
+
+//    TERAZ PROBA WYSLANIA ODPOWIEDZI NA LITERKE
+
+
 
 
 //    duzybufor[BUFFER_SIZE] = {0};

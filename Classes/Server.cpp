@@ -7,13 +7,13 @@
 #include <Utils/utils.h>
 #include <sys/epoll.h>
 #include <arpa/inet.h>
+#include <cstring>
 
 std::map<std::string, Client *> Server::usersMap;
 
-//Sample message todo delete
 char welcomeMessage[] = "Welcome in Country-Capitals Game !!!\n";
 char loginMessage[] = "Please enter unique login: \n";
-char successBuffer[] = "Success";
+char successMessage[] = "Success";
 
 Server::Server(int argc, char **argv) {
     usersMap.clear();
@@ -38,43 +38,40 @@ void Server::handleEvent(uint32_t events) {
         int new_connection = accept(fd, NULL, NULL);
         printf("New connection noticed with socket: %d \n", new_connection);
 
-        writeData(new_connection, welcomeMessage, -1);
-
+        writeData(new_connection, welcomeMessage, CONNECTION_ROUND_VALUE);
         char receiveBuffer[BUFFER_SIZE];
-        int x = readData(new_connection, receiveBuffer, &roundValue);
-        printf("\n%d Data: %s ROUND: %d\n", x, receiveBuffer, roundValue);
+        std::string login;
 
-//        char tempBuffer[BUFFER_SIZE];
-//        std::string login;
-//        int bytes;
-//
-//        do {
-//            writeData(new_connection, welcomeMessage, sizeof(welcomeMessage));
-//
-//            bytes = readData(new_connection, tempBuffer, sizeof(tempBuffer));
-//    //        todo usunac linijke nizej
-//            writeData(1, tempBuffer, bytes);
-//
-//            std::string login(tempBuffer);
-//        } while (usersMap.find(login) == usersMap.end());
-//        writeData(new_connection, successBuffer, sizeof(successBuffer));
-//        usersMap.insert(std::pair<std::string, int>(login, new_connection));
-//        printf("New login has been registered: %s \n", login.c_str());
-        std::string login = "LOGIN 13452 %$#$" + std::to_string(rand());
+        do {
+            writeData(new_connection, loginMessage, CONNECTION_ROUND_VALUE);
+            int bytes = readData(new_connection, receiveBuffer, &roundValue);
+            login = std::string(receiveBuffer);
+            login = login.substr(0,bytes);
+        } while (usersMap.find(login) != usersMap.end());
+
         Client *client = new Client(login, new_connection);
         addClientToMap(client);
+        printf("New login has been registered: '%s' \n", login.c_str());
+        writeData(new_connection, successMessage, CONNECTION_ROUND_VALUE);
 
-//        If condition are true then starts new thread
+//        If condition are true then starts new thread and the game begins
         if (Game::getRound() == 0 && usersMap.size() >=2){
             new Game();
         }
-//        printf("KONIEC DODAWANIA DO SERWERA *********************** round: %d map size: %lu \n", Game::getRound(), usersMap.size());
-
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#0x on server socket", events);
         closeServer();
         exit(0);
+    }
+}
+
+
+void Server::sendToAllClients(char *buffer) {
+    for (const auto &kv : Server::getUsersMap()) {
+        kv.second->lastAnswers.clear();
+        kv.second->lastScore.clear();
+        kv.second->setScore(0);
     }
 }
 
