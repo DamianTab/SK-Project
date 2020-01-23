@@ -11,21 +11,21 @@ int Game::round;
 
 Game::Game() {
     clearClientsPoints();
-    std::thread newThread(&Game::run, this);
+    std::thread t1(&Game::run, this);
+    t1.detach();
 }
 
 Game::~Game() {
     clearClientsPoints();
+
 }
 
 void Game::run() {
     round++;
     while(Server::getUsersMap().size() >= 2){
-        printf("DZIALA \n");
         sleep(SLEEP_TIME);
         round++;
     }
-
     delete this;
 }
 

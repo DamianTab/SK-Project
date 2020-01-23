@@ -47,9 +47,9 @@ void loginServer() {
 //    int bytes;
 //
 //    do {
-//        char messageBuffer[BUFFER_SIZE];
-//        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
-//        writeData(1, messageBuffer, bytes);
+//        char welcomeMessage[BUFFER_SIZE];
+//        bytes = readData(serverSocket, welcomeMessage, sizeof(welcomeMessage));
+//        writeData(1, welcomeMessage, bytes);
 //
 //        string login;
 //        cin >> login;
@@ -57,11 +57,11 @@ void loginServer() {
 //        strcpy(tempBuffer, login.c_str());
 //        writeData(serverSocket, tempBuffer, sizeof(tempBuffer));
 //
-//        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
-//        string response(messageBuffer);
+//        bytes = readData(serverSocket, welcomeMessage, sizeof(welcomeMessage));
+//        string response(welcomeMessage);
 //
 //        //todo usunac
-//        writeData(1, messageBuffer, sizeof(messageBuffer));
+//        writeData(1, welcomeMessage, sizeof(welcomeMessage));
 //    } while (response != "Success");
 
 

@@ -11,7 +11,8 @@
 std::map<std::string, Client *> Server::usersMap;
 
 //Sample message todo delete
-char messageBuffer[] = "Please enter unique login: ";
+char welcomeMessage[] = "Welcome in Country-Capitals Game !!!\n";
+char loginMessage[] = "Please enter unique login: \n";
 char successBuffer[] = "Success";
 
 Server::Server(int argc, char **argv) {
@@ -37,18 +38,18 @@ void Server::handleEvent(uint32_t events) {
         int new_connection = accept(fd, NULL, NULL);
         printf("New connection noticed with socket: %d \n", new_connection);
 
-        writeData(new_connection, messageBuffer, 0);
+        writeData(new_connection, welcomeMessage, -1);
 
-        char duzybufor[BUFFER_SIZE];
-        int x = readData(new_connection, duzybufor, &roundValue);
-        printf("\n%d Data: %s ROUND: %d\n", x, duzybufor, roundValue);
+        char receiveBuffer[BUFFER_SIZE];
+        int x = readData(new_connection, receiveBuffer, &roundValue);
+        printf("\n%d Data: %s ROUND: %d\n", x, receiveBuffer, roundValue);
 
 //        char tempBuffer[BUFFER_SIZE];
 //        std::string login;
 //        int bytes;
 //
 //        do {
-//            writeData(new_connection, messageBuffer, sizeof(messageBuffer));
+//            writeData(new_connection, welcomeMessage, sizeof(welcomeMessage));
 //
 //            bytes = readData(new_connection, tempBuffer, sizeof(tempBuffer));
 //    //        todo usunac linijke nizej
@@ -59,7 +60,7 @@ void Server::handleEvent(uint32_t events) {
 //        writeData(new_connection, successBuffer, sizeof(successBuffer));
 //        usersMap.insert(std::pair<std::string, int>(login, new_connection));
 //        printf("New login has been registered: %s \n", login.c_str());
-        std::string login = "LOGIN 13452 %$#$";
+        std::string login = "LOGIN 13452 %$#$" + std::to_string(rand());
         Client *client = new Client(login, new_connection);
         addClientToMap(client);
 
@@ -67,6 +68,8 @@ void Server::handleEvent(uint32_t events) {
         if (Game::getRound() == 0 && usersMap.size() >=2){
             new Game();
         }
+//        printf("KONIEC DODAWANIA DO SERWERA *********************** round: %d map size: %lu \n", Game::getRound(), usersMap.size());
+
     }
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#0x on server socket", events);
