@@ -19,18 +19,18 @@ char endMessage[] = "The game has ended. Not enough players to to continue :( ";
 
 Game::Game() {
     printf("++++ Starting new game ... \n");
-    clearClientsPoints();
+    clearClientsPoints(true);
     std::thread t1(&Game::run, this);
     t1.detach();
 }
 
 Game::~Game() {
-    clearClientsPoints();
+    clearClientsPoints(true);
     printf("++++ The game has ended ... \n");
 }
 
 void Game::run() {
-    srand (time(NULL));
+    srand(time(NULL));
     char receiveBuffer[BUFFER_SIZE];
     std::string tempString;
 
@@ -63,7 +63,7 @@ void Game::run() {
 
 
 void Game::pushClientToTimeRankingWhenPossible(Client *client) {
-    if (clientsRankingByTime.size() < 10){
+    if (clientsRankingByTime.size() < 10) {
         clientsRankingByTime.push_back(client);
     }
 }
@@ -78,12 +78,14 @@ void Game::setRound(int _round) {
 }
 
 //private
-void Game::clearClientsPoints() {
+void Game::clearClientsPoints(bool shouldClearTotalPoints) {
     round = 0;
     for (const auto &kv : Server::getUsersMap()) {
-        std::fill_n(kv.second->lastAnswers, GAME_WORDS_AMOUNT, 0);
-        std::fill_n(kv.second->lastScore, GAME_WORDS_AMOUNT, 0);
-        kv.second->setScore(0);
+        kv.second->lastAnswers.clear();
+        kv.second->lastScore.clear();
+        if (shouldClearTotalPoints) {
+            kv.second->setScore(0);
+        }
     }
 }
 

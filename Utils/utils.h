@@ -9,6 +9,7 @@
 #include <cerrno>
 #include <error.h>
 #include <string>
+#include <vector>
 
 
 #define BUFFER_SIZE 255
@@ -28,7 +29,7 @@ void writeData(int fd, char *buffer, int round, bool shouldSleep = true);
 
 bool isCorrectRound(int expected, int actual);
 
-void extractPhrase(std::string phrase, std::string *buffer, std::string delimiter = DEFAULT_DELIMITER);
+std::vector<std::string> extractPhrase(std::string phrase, std::string delimiter = DEFAULT_DELIMITER);
 
 // Removing leading and trailing spaces
 std::string removeLeadingAndTrailingSpaces(std::string phrase);

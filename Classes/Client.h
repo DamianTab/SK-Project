@@ -24,8 +24,8 @@ public:
 
     void handleEvent(uint32_t events) override;
 
-    std::string lastAnswers [GAME_WORDS_AMOUNT] ;
-    int lastScore [GAME_WORDS_AMOUNT];
+    std::vector<std::string> lastAnswers ;
+    std::vector<int> lastScore;
 
     // Getters and setters
     std::basic_string<char> getLogin();

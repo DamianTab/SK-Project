@@ -17,7 +17,7 @@ private:
 
     static std::vector<Client *> clientsRankingByTime;
 
-    void clearClientsPoints();
+    void clearClientsPoints(bool shouldClearTotalPoints = false);
 
     void drawLetter();
 
@@ -29,6 +29,8 @@ public:
 
     void run();
 
+    static void pushClientToTimeRankingWhenPossible(Client * client);
+
     static int getRound();
 
     static void setRound(int _round);
@@ -36,8 +38,6 @@ public:
     char getLetter() const;
 
     void setLetter(char letter);
-
-    static void pushClientToTimeRankingWhenPossible(Client * client);
 
     static std::vector<Client *> &getClientsRankingByTime();
 

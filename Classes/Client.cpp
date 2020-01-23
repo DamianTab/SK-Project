@@ -41,7 +41,7 @@ void Client::handleEvent(uint32_t events) {
                 message = std::string(buffer);
                 message = message.substr(0, bytes);
                 printf("OTRZYMANA WIADOMOSC OD KLIENTA: %s \n", message.c_str());
-                extractPhrase(message, lastAnswers);
+                lastAnswers = extractPhrase(message);
                 Game::pushClientToTimeRankingWhenPossible(this);
             }
         }
