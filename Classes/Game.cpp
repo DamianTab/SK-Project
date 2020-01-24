@@ -64,13 +64,11 @@ void Game::run() {
 
         sleep(SERVER_ROUND_TIME);
         printf("++++ End of round: %d ... \n", getRound());
-//        Ignoring new messages from other threads
-//        printf("@@@@@@@ DEBUG1: %d ... \n", getRound());
+//        Ignoring new messages from Clients
         incrementRound();
-//        printf("@@@@@@@ DEBUG2: %d ... \n", getRound());
 
         mutexClientsMap.lock();
-        //        Removing inactive clients
+//        Removing inactive clients
         for (const auto &kv : Server::getClientsMap()) {
             if (kv.second->inactiveRoundsNumber >= ROUNDS_NUMBER_TO_REMOVE_INACTIVE_CLIENT){
                 printf("++++ Removing inactive player with login: '%s' with rounds inactive: %d\n", kv.first.c_str(), kv.second->inactiveRoundsNumber);
@@ -81,19 +79,14 @@ void Game::run() {
         }
         mutexClientsMap.unlock();
 
-//        printf("@@@@@@@ DEBUG3: %d ... \n", getRound());
-
         mutexClientsMap.lock();
 //        Calculating results
         float coefficient = 1.0;
         for (auto it = clientsRankingByTime.begin(); it != clientsRankingByTime.end(); ++it) {
             Client *client = *it;
-//            printf("@@@@@@@ DEBUG31: %d ... \n", getRound());
-
 
 //            If player has been already disconnected then next client from ranking
             if(! Server::isInsideClientMap(client->getLogin())){
-//                printf("@@@@@@@ DEBUG331: %d ... \n", getRound());
                 continue;
             }
 
@@ -125,13 +118,8 @@ void Game::run() {
             }
             coefficient -= 0.1;
             client->recalculateTotalScore();
-            //todo delete
-//            printf("--------------------- Total points: %f of player: '%s'\n", client->getScore(), client->getLogin().c_str());
         }
         mutexClientsMap.unlock();
-
-
-//        printf("@@@@@@@ DEBUG4: %d ... \n", getRound());
 
         mutexClientsMap.lock();
 //        Sending result
@@ -141,17 +129,13 @@ void Game::run() {
         }
         mutexClientsMap.unlock();
 
-//        printf("@@@@@@@ DEBUG5: %d ... \n", getRound());
-
         clearClientsPoints();
 
         mutexClientsMap.lock();
     }
     mutexClientsMap.unlock();
 
-//    printf("@@@@@@@ DEBUG6: %d ... \n", getRound());
-
-//    Sending farewell mesage (to user view)
+//    Sending farewell mesage
     Server::sendToAllClients(endMessage);
     printf("++++ Not enough players to continue !\n");
     delete this;
@@ -160,7 +144,6 @@ void Game::run() {
 
 void Game::pushClientToTimeRankingWhenPossible(Client *client) {
     if (clientsRankingByTime.size() < 10) {
-//        printf("@@@@@@@ DEBUG-PUSH: %d ... \n", getRound());
         clientsRankingByTime.push_back(client);
     }
 }

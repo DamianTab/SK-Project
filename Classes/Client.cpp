@@ -40,7 +40,6 @@ void Client::handleEvent(uint32_t events) {
         //todo tutaj mutex round i ranking
         mutexRound.lock();
         int actualRoundNumber = Game::getRound();
-        printf("@@@@@@@@@@2 Taka runda: '%d' \n", actualRoundNumber);
 //        Pass only if there is data in buffer and the game already has started
         if (bytes > 0 && actualRoundNumber != 0) {
             if (!isCorrectRound(actualRoundNumber, roundValue)) {
