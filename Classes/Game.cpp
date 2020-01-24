@@ -47,7 +47,7 @@ void Game::run() {
     while (Server::getClientsMap().size() >= MINIMUM_PLAYERS_NUMBER) {
         mutexClientsMap.unlock();
         drawLetter();
-        printf("++++ Drawn letter: %c ... Starting new round %d ... \n", letter, getRound());
+        printf("++++ Drawn letter: %c ... \n", letter);
 
 //        Sending letter message
         tempString = std::string(letterMessage);
@@ -65,9 +65,9 @@ void Game::run() {
         sleep(SERVER_ROUND_TIME);
         printf("++++ End of round: %d ... \n", getRound());
 //        Ignoring new messages from other threads
-        printf("@@@@@@@ DEBUG1: %d ... \n", getRound());
+//        printf("@@@@@@@ DEBUG1: %d ... \n", getRound());
         incrementRound();
-        printf("@@@@@@@ DEBUG2: %d ... \n", getRound());
+//        printf("@@@@@@@ DEBUG2: %d ... \n", getRound());
 
         mutexClientsMap.lock();
         //        Removing inactive clients
@@ -81,19 +81,19 @@ void Game::run() {
         }
         mutexClientsMap.unlock();
 
-        printf("@@@@@@@ DEBUG3: %d ... \n", getRound());
+//        printf("@@@@@@@ DEBUG3: %d ... \n", getRound());
 
         mutexClientsMap.lock();
 //        Calculating results
         float coefficient = 1.0;
         for (auto it = clientsRankingByTime.begin(); it != clientsRankingByTime.end(); ++it) {
             Client *client = *it;
-            printf("@@@@@@@ DEBUG31: %d ... \n", getRound());
+//            printf("@@@@@@@ DEBUG31: %d ... \n", getRound());
 
 
 //            If player has been already disconnected then next client from ranking
             if(! Server::isInsideClientMap(client->getLogin())){
-                printf("@@@@@@@ DEBUG331: %d ... \n", getRound());
+//                printf("@@@@@@@ DEBUG331: %d ... \n", getRound());
                 continue;
             }
 
@@ -131,7 +131,7 @@ void Game::run() {
         mutexClientsMap.unlock();
 
 
-        printf("@@@@@@@ DEBUG4: %d ... \n", getRound());
+//        printf("@@@@@@@ DEBUG4: %d ... \n", getRound());
 
         mutexClientsMap.lock();
 //        Sending result
@@ -141,7 +141,7 @@ void Game::run() {
         }
         mutexClientsMap.unlock();
 
-        printf("@@@@@@@ DEBUG5: %d ... \n", getRound());
+//        printf("@@@@@@@ DEBUG5: %d ... \n", getRound());
 
         clearClientsPoints();
 
@@ -149,18 +149,18 @@ void Game::run() {
     }
     mutexClientsMap.unlock();
 
-    printf("@@@@@@@ DEBUG6: %d ... \n", getRound());
+//    printf("@@@@@@@ DEBUG6: %d ... \n", getRound());
 
 //    Sending farewell mesage (to user view)
     Server::sendToAllClients(endMessage);
-    printf("%s\n", endMessage);
+    printf("++++ Not enough players to continue !\n");
     delete this;
 }
 
 
 void Game::pushClientToTimeRankingWhenPossible(Client *client) {
     if (clientsRankingByTime.size() < 10) {
-        printf("@@@@@@@ DEBUG-PUSH: %d ... \n", getRound());
+//        printf("@@@@@@@ DEBUG-PUSH: %d ... \n", getRound());
         clientsRankingByTime.push_back(client);
     }
 }
@@ -172,12 +172,12 @@ int Game::getRound() {
 }
 
 void Game::incrementRound() {
-//    std::scoped_lock lock{mutexRound};
+    std::scoped_lock lock{mutexRound};
     round++;
 }
 
 void Game::setRound(int _round) {
-//    std::scoped_lock lock{mutexRound};
+    std::scoped_lock lock{mutexRound};
     Game::round = _round;
 }
 

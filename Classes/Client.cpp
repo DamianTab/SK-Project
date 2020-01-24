@@ -36,10 +36,12 @@ void Client::handleEvent(uint32_t events) {
     } else if (events & EPOLLIN) {
         char buffer[BUFFER_SIZE];
         int bytes = readData(fd, buffer, &roundValue);
-//        Pass only if there is data in buffer and the game already has stared
 
         //todo tutaj mutex round i ranking
+        mutexRound.lock();
         int actualRoundNumber = Game::getRound();
+        printf("@@@@@@@@@@2 Taka runda: '%d' \n", actualRoundNumber);
+//        Pass only if there is data in buffer and the game already has started
         if (bytes > 0 && actualRoundNumber != 0) {
             if (!isCorrectRound(actualRoundNumber, roundValue)) {
                 error(0, errno, "Aborting invalid message from client '%s' with fd %d !\n", login.c_str(), fd);
@@ -56,6 +58,7 @@ void Client::handleEvent(uint32_t events) {
                 Game::pushClientToTimeRankingWhenPossible(this);
             }
         }
+        mutexRound.unlock();
     }
 }
 
