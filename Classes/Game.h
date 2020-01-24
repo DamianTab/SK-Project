@@ -23,6 +23,12 @@ private:
     void drawLetter();
 
     void incrementRound();
+
+    void removeInactiveClients();
+
+    void calculateResults();
+
+    void sendResults();
 public:
 
     Game();
