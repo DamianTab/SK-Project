@@ -13,27 +13,33 @@
 class Server : public SocketHandler {
 private:
     // Map with user login and socket (FD)
-    static std::map<std::string, Client *> usersMap;
+    static std::map<std::string, Client *> clientsMap;
 
     void createServerSocket(int argc, char **argv);
+
+    void clearClientsMap();
 
 public:
     Server(int argc, char **argv);
 
-    ~Server();
+    ~Server() override;
 
     void handleEvent(uint32_t events) override;
 
     void closeServer();
 
-    static void addClient(Client *client);
+    static void addClientToMap(Client *client);
 
-    static void deleteClient(std::string login);
+    static void deleteClientFromMap(std::string login);
+
+    static bool isInsideClientMap(std::string login);
+
+    static void sendToAllClients(char * buffer);
 
     // Getters and setters
-    std::map<std::string, Client *> &getUsersMap();
+    static std::map<std::string, Client *> &getClientsMap();
 
-    void setUsersMap(std::map<std::string, Client *> &usersMap);
+    static void setClientsMap(std::map<std::string, Client *> &usersMap);
 };
 
 

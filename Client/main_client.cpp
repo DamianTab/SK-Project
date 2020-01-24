@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <arpa/inet.h>
 #include <error.h>
-#include <cstring>
 #include <Utils/utils.h>
 
 using namespace std;
@@ -13,6 +12,7 @@ int serverSocket;
 
 //Functions
 void createSocketAndConnect(int argc, char **argv);
+
 void loginServer();
 
 int main(int argc, char **argv) {
@@ -28,7 +28,6 @@ int main(int argc, char **argv) {
     return 0;
 }
 
-
 void createSocketAndConnect(int argc, char **argv) {
     sockaddr_in serverAdress;
     inet_aton(argv[1], &serverAdress.sin_addr);
@@ -40,59 +39,52 @@ void createSocketAndConnect(int argc, char **argv) {
 }
 
 void loginServer() {
-//    std::string response;
-//    int bytes;
-//
-//    do {
-//        char messageBuffer[BUFFER_SIZE];
-//        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
-//        writeData(1, messageBuffer, bytes);
-//
-//        string login;
-//        cin >> login;
-//        char tempBuffer[login.size()+1];
-//        strcpy(tempBuffer, login.c_str());
-//        writeData(serverSocket, tempBuffer, sizeof(tempBuffer));
-//
-//        bytes = readData(serverSocket, messageBuffer, sizeof(messageBuffer));
-//        string response(messageBuffer);
-//
-//        //todo usunac
-//        writeData(1, messageBuffer, sizeof(messageBuffer));
-//    } while (response != "Success");
+    int roundValue = 0;
+    string message;
 
 
+    char buffer[BUFFER_SIZE];
+    int bytes = readData(serverSocket, buffer, &roundValue);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s \n", message.c_str());
 
-    char duzybufor[BUFFER_SIZE];
-    int x = read(serverSocket, duzybufor, BUFFER_SIZE);
-    perror("Reading from socket");
-    printf("\n%d Data: %s\n", x, duzybufor);
+    bytes = readData(serverSocket, buffer, &roundValue);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s \n", message.c_str());
 
-    char messageBuffer[] = "To jest wiadomosc dla serwera ";
-    writeData(serverSocket, messageBuffer, sizeof(messageBuffer));
+    char messageBuffer[] = "MojLogin";
+    writeData(serverSocket, messageBuffer, roundValue);
 
-    printf("-----SLEEP\n");
-    sleep(1);
+    bytes = readData(serverSocket, buffer, &roundValue);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s", message.c_str());
 
+    printf("----- Correct Authorization\n");
 
-//    Proba zablokowania write
-    char data[]={"wiadomosc\n"};
-    int sent = 1;
-    int i=0;
-    while(i<1) {
-        int written = write(serverSocket, data, sizeof(data));
-        if(written>0){
-            std::cout << "   Sent " << sent++ << "0\r" << std::flush;
-        } else if(written==-1){
-            if(errno == EWOULDBLOCK || errno == EAGAIN)
-                std::cout << std::endl << "Next write would block" << std::endl;
-            else
-                std::cout << std::endl << "Write went wrong" << std::endl;
-            break;
-        } else {
-            std::cout     << std::endl << "Sent only " << written << " out of 10 bytes" << std::endl;
-            break;
+//    PO ROZPOCZECIU GRY --- PROBA WYSLANIA ODPOWIEDZI NA LITERKE
+
+    bytes = readData(serverSocket, buffer, &roundValue);
+    message = std::string(buffer);
+    message = message.substr(0, bytes);
+    printf("%s (ROUND '%d')\n", message.c_str(), roundValue);
+
+    while (1){
+        for (int i = 0; i < 2; ++i) {
+            bytes = readData(serverSocket, buffer, &roundValue);
+            message = std::string(buffer);
+            message = message.substr(0, bytes);
+            printf("%s (ROUND '%d')\n", message.c_str(), roundValue);
         }
-        i++;
+//        char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ,loląń, CO KOLWIEK";
+        char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ";
+        writeData(serverSocket, messageBuffer, roundValue);
+
+        bytes = readData(serverSocket, buffer, &roundValue);
+        message = std::string(buffer);
+        message = message.substr(0, bytes);
+        printf("+++ Results: %s \n", message.c_str());
     }
 }

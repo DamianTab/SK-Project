@@ -9,26 +9,40 @@
 #include "SocketHandler.h"
 #include <string>
 #include <set>
+#include <vector>
+#include <Utils/utils.h>
+
 
 class Client : public SocketHandler {
 private:
     std::string login;
-    int score = 0;
+    float totalScore = 0;
 public:
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
+    int inactiveRoundsNumber = 0;
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
+    std::vector<std::string> lastAnswers ;
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
+    std::vector<float> lastScore;
+
     Client(std::string _login, int _fd);
 
-    ~Client();
+    ~Client() override;
 
     void handleEvent(uint32_t events) override;
+
+    void recalculateTotalScore();
+
+    void sendAnswersAndPoints();
 
     // Getters and setters
     std::basic_string<char> getLogin();
 
     void setLogin(std::string &login);
 
-    int getScore();
+    float getScore();
 
-    void setScore(int score);
+    void setScore(float score);
 };
 
 
