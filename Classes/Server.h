@@ -17,6 +17,8 @@ private:
 
     void createServerSocket(int argc, char **argv);
 
+    void clearClientsMap();
+
 public:
     Server(int argc, char **argv);
 

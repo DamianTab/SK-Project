@@ -30,16 +30,21 @@ void Client::handleEvent(uint32_t events) {
     if (events & ~EPOLLIN) {
         error(0, errno, "Event %#04x on client socket %d with login: '%s'. Disconnect client ...", events, fd,
               login.c_str());
-        delete (this);
+        mutexClientsMap.lock();
+        delete this;
+        mutexClientsMap.unlock();
     } else if (events & EPOLLIN) {
         char buffer[BUFFER_SIZE];
         int bytes = readData(fd, buffer, &roundValue);
 //        Pass only if there is data in buffer and the game already has stared
-        if (bytes > 0 && Game::getRound() != 0) {
-            if (!isCorrectRound(Game::getRound(), roundValue)) {
+
+        //todo tutaj mutex round i ranking
+        int actualRoundNumber = Game::getRound();
+        if (bytes > 0 && actualRoundNumber != 0) {
+            if (!isCorrectRound(actualRoundNumber, roundValue)) {
                 error(0, errno, "Aborting invalid message from client '%s' with fd %d !\n", login.c_str(), fd);
             } else {
-//                BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX HERE
+//                BECAUSE OF ROUND - DO NOT NEED TO PLACE MUTEX HERE
                 message = std::string(buffer);
                 message = message.substr(0, bytes);
                 printf("--------------------- Received message from Client '%s': '%s' \n", login.c_str(), message.c_str());

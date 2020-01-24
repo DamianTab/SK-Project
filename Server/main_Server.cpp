@@ -4,14 +4,16 @@
 #include <sys/epoll.h>
 #include <Classes/Server.h>
 #include <csignal>
+#include <Classes/Game.h>
 
 using namespace std;
 
-//Functions
-void handleEpollEvents(Server *server);
-void ctrl_c(int);
-
 Server *server;
+
+
+void handleEpollEvents(Server *server);
+
+extern void ctrl_c(int);
 
 int main(int argc, char **argv) {
     if (argc != 3)
@@ -52,7 +54,8 @@ void handleEpollEvents(Server *server) {
 }
 
 
-void ctrl_c(int){
+void ctrl_c(int) {
+    delete Game::gameInstance;
     server->closeServer();
     printf("\nClosing server - caused by ctrl_c\n");
     exit(0);

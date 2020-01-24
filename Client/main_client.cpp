@@ -39,50 +39,50 @@ void createSocketAndConnect(int argc, char **argv) {
 }
 
 void loginServer() {
-    int round = 0;
+    int roundValue = 0;
     string message;
 
 
     char buffer[BUFFER_SIZE];
-    int bytes = readData(serverSocket, buffer, &round);
+    int bytes = readData(serverSocket, buffer, &roundValue);
     message = std::string(buffer);
     message = message.substr(0, bytes);
     printf("%s \n", message.c_str());
 
-    bytes = readData(serverSocket, buffer, &round);
+    bytes = readData(serverSocket, buffer, &roundValue);
     message = std::string(buffer);
     message = message.substr(0, bytes);
     printf("%s \n", message.c_str());
 
     char messageBuffer[] = "MojLogin";
-    writeData(serverSocket, messageBuffer, round);
+    writeData(serverSocket, messageBuffer, roundValue);
 
-    bytes = readData(serverSocket, buffer, &round);
+    bytes = readData(serverSocket, buffer, &roundValue);
     message = std::string(buffer);
     message = message.substr(0, bytes);
     printf("%s", message.c_str());
 
-    printf("----- POPRAWNA AUTORYZACJA\n");
+    printf("----- Correct Authorization\n");
 
 //    PO ROZPOCZECIU GRY --- PROBA WYSLANIA ODPOWIEDZI NA LITERKE
 
-    bytes = readData(serverSocket, buffer, &round);
+    bytes = readData(serverSocket, buffer, &roundValue);
     message = std::string(buffer);
     message = message.substr(0, bytes);
-    printf("%s (ROUND '%d')\n", message.c_str(), round);
+    printf("%s (ROUND '%d')\n", message.c_str(), roundValue);
 
     while (1){
         for (int i = 0; i < 2; ++i) {
-            bytes = readData(serverSocket, buffer, &round);
+            bytes = readData(serverSocket, buffer, &roundValue);
             message = std::string(buffer);
             message = message.substr(0, bytes);
-            printf("%s (ROUND '%d')\n", message.c_str(), round);
+            printf("%s (ROUND '%d')\n", message.c_str(), roundValue);
         }
 //        char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ,loląń, CO KOLWIEK";
         char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ";
-        writeData(serverSocket, messageBuffer, round);
+        writeData(serverSocket, messageBuffer, roundValue);
 
-        bytes = readData(serverSocket, buffer, &round);
+        bytes = readData(serverSocket, buffer, &roundValue);
         message = std::string(buffer);
         message = message.substr(0, bytes);
         printf("+++ Results: %s \n", message.c_str());

@@ -16,18 +16,12 @@ char loginMessage[] = "Please enter unique login: \n";
 char successMessage[] = "Success\n";
 
 Server::Server(int argc, char **argv) {
-    clientsMap.clear();
+    clearClientsMap();
     createServerSocket(argc, argv);
 }
 
 Server::~Server() {
-    auto it = clientsMap.begin();
-    while (it != clientsMap.end()) {
-        std::pair<std::string, Client *> pair = *it;
-        delete (pair.second);
-        it++;
-    }
-    clientsMap.clear();
+    clearClientsMap();
 }
 
 void Server::handleEvent(uint32_t events) {
@@ -50,16 +44,21 @@ void Server::handleEvent(uint32_t events) {
 
             //todo usunac
             login = login + std::to_string(rand());
-        } while (clientsMap.find(login) != clientsMap.end());
+//            todo dolozyc mutex
+        } while (isInsideClientMap(login));
 
+        mutexClientsMap.lock();
         Client *client = new Client(login, new_connection);
         addClientToMap(client);
         printf("New login has been registered: '%s' \n", login.c_str());
         writeData(new_connection, successMessage, CONNECTION_ROUND_VALUE);
 
 //        If condition are true then starts new thread and the game begins
-        if (Game::getRound() == 0 && clientsMap.size() >= MINIMUM_PLAYERS_NUMBER) {
+        if (Game::getRound() == 0 && getClientsMap().size() >= MINIMUM_PLAYERS_NUMBER) {
+            mutexClientsMap.unlock();
             new Game();
+        } else{
+            mutexClientsMap.unlock();
         }
     }
     if (events & ~EPOLLIN) {
@@ -71,7 +70,8 @@ void Server::handleEvent(uint32_t events) {
 
 
 void Server::sendToAllClients(char *buffer) {
-    for (const auto &kv : Server::getClientsMap()) {
+    std::scoped_lock lock{mutexClientsMap};
+    for (const auto &kv : clientsMap) {
         writeData(kv.second->fd, buffer, Game::getRound(), false);
     }
     sleep(SLEEP_WRITE_TO_ALL);
@@ -79,14 +79,17 @@ void Server::sendToAllClients(char *buffer) {
 
 
 void Server::addClientToMap(Client *client) {
+//    Mutex outside function
     clientsMap.insert(std::pair<std::string, Client *>(client->getLogin(), client));
 }
 
 void Server::deleteClientFromMap(std::string login) {
+//    Mutex outside function
     clientsMap.erase(login);
 }
 
 bool Server::isInsideClientMap(std::string login) {
+//    Mutex outside function (except server-handler)
     return clientsMap.find(login) != clientsMap.end();
 }
 
@@ -116,12 +119,25 @@ void Server::createServerSocket(int argc, char **argv) {
         error(1, errno, "Failed to bind server address!\n");
 }
 
+void Server::clearClientsMap() {
+    std::scoped_lock lock{mutexClientsMap};
+    auto it = clientsMap.begin();
+    while (it != clientsMap.end()) {
+        std::pair<std::string, Client *> pair = *it;
+        delete (pair.second);
+        it++;
+    }
+    clientsMap.clear();
+}
+
 
 // Getters and setters
 std::map<std::string, Client *> &Server::getClientsMap() {
+//    Mutex outside function
     return clientsMap;
 }
 
 void Server::setClientsMap(std::map<std::string, Client *> &usersMap) {
+    std::scoped_lock lock{mutexClientsMap};
     Server::clientsMap = usersMap;
 }

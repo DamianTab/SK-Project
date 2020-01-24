@@ -22,11 +22,14 @@ private:
 
     void drawLetter();
 
+    void incrementRound();
 public:
 
     Game();
 
     ~Game();
+
+    static Game* gameInstance;
 
     void run();
 
@@ -43,6 +46,7 @@ public:
     static std::vector<Client *> &getClientsRankingByTime();
 
     static void setClientsRankingByTime(std::vector<Client *> &clientsRankingByTime);
+
 };
 
 
