@@ -103,20 +103,17 @@ std::vector<std::string> extractPhrase(std::string phrase, std::string delimiter
     size_t pos = 0;
 
     toLower(&phrase);
-//    printf("OTRZYMANA WIADOMOSC OD KLIENTA: %s \n", phrase.c_str());
 
     while (vec.size() < GAME_WORDS_AMOUNT && (pos = phrase.find(delimiter)) != std::string::npos) {
         tempString = phrase.substr(0, pos);
         tempString = removeLeadingAndTrailingSpaces(tempString);
         vec.push_back(tempString);
-        //        printf("Czesc: '%s' numer:%d\n", buffer[i].c_str(),i);
         phrase.erase(0, pos + delimiter.length());
     }
 //    If message words = GAME_WORDS_AMOUNT (to not omit last word)
     if (vec.size() < GAME_WORDS_AMOUNT) {
         phrase = removeLeadingAndTrailingSpaces(phrase);
         vec.push_back(phrase);
-//        printf("OSTATNIA Czesc: '%s' numer:%d\n", buffer[i].c_str(),i);
     }
     return vec;
 }

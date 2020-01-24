@@ -12,7 +12,6 @@ int Game::round;
 std::vector<Client *> Game::clientsRankingByTime;
 
 char startMessage[] = "The new game has started !!!";
-char drawMessage[] = "Drawing new letter ...";
 char letterMessage[] = "New letter is : ";
 char roundMessage[] = "Starting round: ";
 char endMessage[] = "The game has ended. Not enough players to to continue :( ";
@@ -33,6 +32,7 @@ void Game::run() {
     srand(time(NULL));
     char receiveBuffer[BUFFER_SIZE];
     std::string tempString;
+    round ++;
 
 //    Sending greetings
     Server::sendToAllClients(startMessage);
@@ -47,13 +47,57 @@ void Game::run() {
         Server::sendToAllClients(receiveBuffer);
 
 //        Sending round number (to user view)
-        tempString = std::string(roundMessage) + std::to_string(++round);
+        tempString = std::string(roundMessage) + std::to_string(round);
         strcpy(receiveBuffer, tempString.c_str());
         Server::sendToAllClients(receiveBuffer);
 
         sleep(SERVER_ROUND_TIME);
-
         printf("++++ End of round: %d ... \n", round);
+//        To avoid changes by other threads
+        round ++;
+
+        float coefficient = 1.0;
+        for (auto it = clientsRankingByTime.begin(); it != clientsRankingByTime.end(); ++it) {
+            Client *client = *it;
+
+//            This client already has default values (0);
+            client->lastScore.clear();
+
+            for (int i = 0; i < (int) client->lastAnswers.size(); ++i) {
+                bool isAnswerRepeated = false;
+//                If answer is correct
+                if (client->lastAnswers[i][0] == letter) {
+//                    printf("TAK JEST ROWNE LITERCE %s\n", client->lastAnswers[i].c_str());
+                    for (const auto &kv : Server::getUsersMap()) {
+//                        Have to be other client
+                        if (kv.second == client) continue;
+//                        If other client has the same answer
+                        if (kv.second->lastAnswers[i] == client->lastAnswers[i]) {
+                            isAnswerRepeated = true;
+                            break;
+                        }
+                    }
+                    if (isAnswerRepeated) {
+                        client->lastScore.push_back(CORRECT_REPEATED_ANSWER_POINTS * coefficient);
+                    } else {
+                        client->lastScore.push_back(CORRECT_ANSWER_POINTS * coefficient);
+                    }
+//                    If answer is incorrect
+                } else {
+                    client->lastScore.push_back(0);
+                }
+            }
+            coefficient -= 0.1;
+            client->recalculateTotalScore();
+            printf("-----------------------OGOLNA LICZBA PUNKTOW %f dla gracza: '%s'\n", client->getScore(), client->getLogin().c_str());
+        }
+
+//        Sending result
+        for (const auto &kv : Server::getUsersMap()) {
+            kv.second->sendAnswersAndPoints();
+        }
+
+        clearClientsPoints();
     }
 
 //    Sending farewell mesage (to user view)
@@ -79,12 +123,13 @@ void Game::setRound(int _round) {
 
 //private
 void Game::clearClientsPoints(bool shouldClearTotalPoints) {
-    round = 0;
+    clientsRankingByTime.clear();
     for (const auto &kv : Server::getUsersMap()) {
         kv.second->lastAnswers.clear();
         kv.second->lastScore.clear();
         if (shouldClearTotalPoints) {
             kv.second->setScore(0);
+            round = 0;
         }
     }
 }

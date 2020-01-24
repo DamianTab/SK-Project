@@ -4,6 +4,7 @@
 
 #include <sys/epoll.h>
 #include <Utils/utils.h>
+#include <cstring>
 #include "Client.h"
 #include "Server.h"
 #include "Game.h"
@@ -41,11 +42,29 @@ void Client::handleEvent(uint32_t events) {
                 message = std::string(buffer);
                 message = message.substr(0, bytes);
                 printf("OTRZYMANA WIADOMOSC OD KLIENTA: %s \n", message.c_str());
+//                Assign last answers and default (0) points for them
                 lastAnswers = extractPhrase(message);
+                lastScore.insert(lastScore.end(), GAME_WORDS_AMOUNT, 0);
                 Game::pushClientToTimeRankingWhenPossible(this);
             }
         }
     }
+}
+
+
+void Client::sendAnswersAndPoints() {
+
+    for(float value: lastScore){
+        printf("%f\n",value);
+    }
+
+    char messageBuffer[BUFFER_SIZE];
+    std::string tempString = "Total points:" + std::to_string(totalScore) + ";\t";
+    for (int i = 0; i < (int) lastAnswers.size(); ++i) {
+        tempString += " Answer: '" + lastAnswers[i] + "' points: "+ std::to_string(lastScore[i]) + ";\t";
+    }
+    strcpy(messageBuffer, tempString.c_str());
+    writeData(fd, messageBuffer, Game::getRound());
 }
 
 // Getters and setters
@@ -57,10 +76,16 @@ void Client::setLogin(std::string &login) {
     Client::login = login;
 }
 
-int Client::getScore() {
+float Client::getScore() {
     return totalScore;
 }
 
-void Client::setScore(int score) {
+void Client::setScore(float score) {
     Client::totalScore = score;
+}
+
+void Client::recalculateTotalScore() {
+    for(float value: lastScore){
+        totalScore += value;
+    }
 }

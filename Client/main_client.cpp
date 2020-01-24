@@ -78,10 +78,13 @@ void loginServer() {
             message = message.substr(0, bytes);
             printf("%s (ROUND '%d')\n", message.c_str(), round);
         }
-        sleep(2);
-
 //        char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ,loląń, CO KOLWIEK";
         char messageBuffer[] = "PAństwo,    miaSTO,rzeka,   imię   ";
         writeData(serverSocket, messageBuffer, round);
+
+        bytes = readData(serverSocket, buffer, &round);
+        message = std::string(buffer);
+        message = message.substr(0, bytes);
+        printf("+++ WYNIKI: %s \n", message.c_str());
     }
 }

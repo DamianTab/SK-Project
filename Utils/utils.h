@@ -14,13 +14,15 @@
 
 #define BUFFER_SIZE 255
 #define HEADER_SIZE 8
-#define SERVER_ROUND_TIME 10
-#define SLEEP_WRITE 0.1
+#define SERVER_ROUND_TIME 5
+#define SLEEP_WRITE 0.2
 #define SLEEP_WRITE_TO_ALL 0.4
 #define CONNECTION_ROUND_VALUE -1
 #define MINIMUM_PLAYERS_NUMBER 1
 #define GAME_WORDS_AMOUNT 4
 #define DEFAULT_DELIMITER ","
+#define CORRECT_ANSWER_POINTS 15
+#define CORRECT_REPEATED_ANSWER_POINTS 10
 
 
 int readData(int fd, char *buffer, int *round);

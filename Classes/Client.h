@@ -16,25 +16,30 @@
 class Client : public SocketHandler {
 private:
     std::string login;
-    int totalScore = 0;
+    float totalScore = 0;
 public:
+
+    std::vector<std::string> lastAnswers ;
+    std::vector<float> lastScore;
+
     Client(std::string _login, int _fd);
 
     ~Client() override;
 
     void handleEvent(uint32_t events) override;
 
-    std::vector<std::string> lastAnswers ;
-    std::vector<int> lastScore;
+    void recalculateTotalScore();
+
+    void sendAnswersAndPoints();
 
     // Getters and setters
     std::basic_string<char> getLogin();
 
     void setLogin(std::string &login);
 
-    int getScore();
+    float getScore();
 
-    void setScore(int score);
+    void setScore(float score);
 };
 
 
