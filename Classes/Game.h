@@ -15,9 +15,10 @@ private:
 
     static int round;
 
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
     static std::vector<Client *> clientsRankingByTime;
 
-    void clearClientsPoints(bool shouldClearTotalPoints = false);
+    void clearClientsPoints(bool shouldClearTotalPointsAndRound = false);
 
     void drawLetter();
 

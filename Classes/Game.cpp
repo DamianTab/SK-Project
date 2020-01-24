@@ -38,7 +38,7 @@ void Game::run() {
     Server::sendToAllClients(startMessage);
     while (Server::getUsersMap().size() >= MINIMUM_PLAYERS_NUMBER) {
         drawLetter();
-        printf("++++ Drawn letter: %c ... \n", letter);
+        printf("++++ Drawn letter: %c ... Starting new round %d ... \n", letter, round);
 
 //        Sending letter message
         tempString = std::string(letterMessage);
@@ -53,9 +53,24 @@ void Game::run() {
 
         sleep(SERVER_ROUND_TIME);
         printf("++++ End of round: %d ... \n", round);
-//        To avoid changes by other threads
+//        Ignoring new messages from other threads
         round ++;
 
+//        Waiting for last messeges (synchronize to avoid concurrency problem - with last message)
+        sleep(1);
+
+        //        Removing inactive clients
+        for (const auto &kv : Server::getUsersMap()) {
+            if (kv.second->inactiveRoundsNumber >= ROUNDS_NUMBER_TO_REMOVE_INACTIVE_CLIENT){
+                printf("Removing inactive player with login: '%s' with rounds inactive: %d\n", kv.first.c_str(), kv.second->inactiveRoundsNumber);
+                delete kv.second;
+            }else if(kv.second->lastAnswers.size() == 0){
+                kv.second->inactiveRoundsNumber++;
+            }
+        }
+
+
+//        Calculating results
         float coefficient = 1.0;
         for (auto it = clientsRankingByTime.begin(); it != clientsRankingByTime.end(); ++it) {
             Client *client = *it;
@@ -67,7 +82,6 @@ void Game::run() {
                 bool isAnswerRepeated = false;
 //                If answer is correct
                 if (client->lastAnswers[i][0] == letter) {
-//                    printf("TAK JEST ROWNE LITERCE %s\n", client->lastAnswers[i].c_str());
                     for (const auto &kv : Server::getUsersMap()) {
 //                        Have to be other client
                         if (kv.second == client) continue;
@@ -89,14 +103,13 @@ void Game::run() {
             }
             coefficient -= 0.1;
             client->recalculateTotalScore();
-            printf("-----------------------OGOLNA LICZBA PUNKTOW %f dla gracza: '%s'\n", client->getScore(), client->getLogin().c_str());
+            printf("--------------------- Total points: %f of player: '%s'\n", client->getScore(), client->getLogin().c_str());
         }
 
 //        Sending result
         for (const auto &kv : Server::getUsersMap()) {
             kv.second->sendAnswersAndPoints();
         }
-
         clearClientsPoints();
     }
 
@@ -122,15 +135,17 @@ void Game::setRound(int _round) {
 }
 
 //private
-void Game::clearClientsPoints(bool shouldClearTotalPoints) {
+void Game::clearClientsPoints(bool shouldClearTotalPointsAndRound) {
     clientsRankingByTime.clear();
     for (const auto &kv : Server::getUsersMap()) {
         kv.second->lastAnswers.clear();
         kv.second->lastScore.clear();
-        if (shouldClearTotalPoints) {
+        if (shouldClearTotalPointsAndRound) {
             kv.second->setScore(0);
-            round = 0;
         }
+    }
+    if (shouldClearTotalPointsAndRound) {
+        round = 0;
     }
 }
 

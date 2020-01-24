@@ -85,6 +85,6 @@ void loginServer() {
         bytes = readData(serverSocket, buffer, &round);
         message = std::string(buffer);
         message = message.substr(0, bytes);
-        printf("+++ WYNIKI: %s \n", message.c_str());
+        printf("+++ Results: %s \n", message.c_str());
     }
 }

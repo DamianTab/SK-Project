@@ -39,12 +39,15 @@ void Client::handleEvent(uint32_t events) {
             if (!isCorrectRound(Game::getRound(), roundValue)) {
                 error(0, errno, "Aborting invalid message from client '%s' with fd %d !\n", login.c_str(), fd);
             } else {
+//                BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX HERE
                 message = std::string(buffer);
                 message = message.substr(0, bytes);
-                printf("OTRZYMANA WIADOMOSC OD KLIENTA: %s \n", message.c_str());
+                printf("--------------------- Received message from Client '%s': '%s' \n", login.c_str(), message.c_str());
 //                Assign last answers and default (0) points for them
                 lastAnswers = extractPhrase(message);
-                lastScore.insert(lastScore.end(), GAME_WORDS_AMOUNT, 0);
+                lastScore.insert(lastScore.end(), lastAnswers.size(), 0);
+                inactiveRoundsNumber = 0;
+
                 Game::pushClientToTimeRankingWhenPossible(this);
             }
         }
@@ -53,18 +56,14 @@ void Client::handleEvent(uint32_t events) {
 
 
 void Client::sendAnswersAndPoints() {
-
-    for(float value: lastScore){
-        printf("%f\n",value);
-    }
-
     char messageBuffer[BUFFER_SIZE];
     std::string tempString = "Total points:" + std::to_string(totalScore) + ";\t";
     for (int i = 0; i < (int) lastAnswers.size(); ++i) {
         tempString += " Answer: '" + lastAnswers[i] + "' points: "+ std::to_string(lastScore[i]) + ";\t";
     }
     strcpy(messageBuffer, tempString.c_str());
-    writeData(fd, messageBuffer, Game::getRound());
+//    Must be Game::getRound()-1 because round number is increasing after sleep and before new round beginning
+    writeData(fd, messageBuffer, Game::getRound()-1);
 }
 
 // Getters and setters

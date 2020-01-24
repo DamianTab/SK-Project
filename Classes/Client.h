@@ -18,8 +18,11 @@ private:
     std::string login;
     float totalScore = 0;
 public:
-
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
+    int inactiveRoundsNumber = 0;
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
     std::vector<std::string> lastAnswers ;
+//    BECAUSE OF ROUND NUMBER - DO NOT NEED TO PLACE MUTEX ON THIS VARIABLE
     std::vector<float> lastScore;
 
     Client(std::string _login, int _fd);
