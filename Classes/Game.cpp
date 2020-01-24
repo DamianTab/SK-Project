@@ -36,7 +36,7 @@ void Game::run() {
 
 //    Sending greetings
     Server::sendToAllClients(startMessage);
-    while (Server::getUsersMap().size() >= MINIMUM_PLAYERS_NUMBER) {
+    while (Server::getClientsMap().size() >= MINIMUM_PLAYERS_NUMBER) {
         drawLetter();
         printf("++++ Drawn letter: %c ... Starting new round %d ... \n", letter, round);
 
@@ -60,7 +60,7 @@ void Game::run() {
         sleep(1);
 
         //        Removing inactive clients
-        for (const auto &kv : Server::getUsersMap()) {
+        for (const auto &kv : Server::getClientsMap()) {
             if (kv.second->inactiveRoundsNumber >= ROUNDS_NUMBER_TO_REMOVE_INACTIVE_CLIENT){
                 printf("Removing inactive player with login: '%s' with rounds inactive: %d\n", kv.first.c_str(), kv.second->inactiveRoundsNumber);
                 delete kv.second;
@@ -75,6 +75,11 @@ void Game::run() {
         for (auto it = clientsRankingByTime.begin(); it != clientsRankingByTime.end(); ++it) {
             Client *client = *it;
 
+//            If player has been already disconnected then next client from ranking
+            if(! Server::isInsideClientMap(client->getLogin())){
+                continue;
+            }
+
 //            This client already has default values (0);
             client->lastScore.clear();
 
@@ -82,7 +87,7 @@ void Game::run() {
                 bool isAnswerRepeated = false;
 //                If answer is correct
                 if (client->lastAnswers[i][0] == letter) {
-                    for (const auto &kv : Server::getUsersMap()) {
+                    for (const auto &kv : Server::getClientsMap()) {
 //                        Have to be other client
                         if (kv.second == client) continue;
 //                        If other client has the same answer
@@ -107,7 +112,7 @@ void Game::run() {
         }
 
 //        Sending result
-        for (const auto &kv : Server::getUsersMap()) {
+        for (const auto &kv : Server::getClientsMap()) {
             kv.second->sendAnswersAndPoints();
         }
         clearClientsPoints();
@@ -137,7 +142,7 @@ void Game::setRound(int _round) {
 //private
 void Game::clearClientsPoints(bool shouldClearTotalPointsAndRound) {
     clientsRankingByTime.clear();
-    for (const auto &kv : Server::getUsersMap()) {
+    for (const auto &kv : Server::getClientsMap()) {
         kv.second->lastAnswers.clear();
         kv.second->lastScore.clear();
         if (shouldClearTotalPointsAndRound) {

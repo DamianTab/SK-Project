@@ -9,25 +9,25 @@
 #include <arpa/inet.h>
 #include <cstring>
 
-std::map<std::string, Client *> Server::usersMap;
+std::map<std::string, Client *> Server::clientsMap;
 
 char welcomeMessage[] = "Welcome in Country-Capitals Game !!!\n";
 char loginMessage[] = "Please enter unique login: \n";
 char successMessage[] = "Success\n";
 
 Server::Server(int argc, char **argv) {
-    usersMap.clear();
+    clientsMap.clear();
     createServerSocket(argc, argv);
 }
 
 Server::~Server() {
-    auto it = usersMap.begin();
-    while (it != usersMap.end()) {
+    auto it = clientsMap.begin();
+    while (it != clientsMap.end()) {
         std::pair<std::string, Client *> pair = *it;
         delete (pair.second);
         it++;
     }
-    usersMap.clear();
+    clientsMap.clear();
 }
 
 void Server::handleEvent(uint32_t events) {
@@ -50,7 +50,7 @@ void Server::handleEvent(uint32_t events) {
 
             //todo usunac
             login = login + std::to_string(rand());
-        } while (usersMap.find(login) != usersMap.end());
+        } while (clientsMap.find(login) != clientsMap.end());
 
         Client *client = new Client(login, new_connection);
         addClientToMap(client);
@@ -58,7 +58,7 @@ void Server::handleEvent(uint32_t events) {
         writeData(new_connection, successMessage, CONNECTION_ROUND_VALUE);
 
 //        If condition are true then starts new thread and the game begins
-        if (Game::getRound() == 0 && usersMap.size() >= MINIMUM_PLAYERS_NUMBER) {
+        if (Game::getRound() == 0 && clientsMap.size() >= MINIMUM_PLAYERS_NUMBER) {
             new Game();
         }
     }
@@ -71,7 +71,7 @@ void Server::handleEvent(uint32_t events) {
 
 
 void Server::sendToAllClients(char *buffer) {
-    for (const auto &kv : Server::getUsersMap()) {
+    for (const auto &kv : Server::getClientsMap()) {
         writeData(kv.second->fd, buffer, Game::getRound(), false);
     }
     sleep(SLEEP_WRITE_TO_ALL);
@@ -79,12 +79,17 @@ void Server::sendToAllClients(char *buffer) {
 
 
 void Server::addClientToMap(Client *client) {
-    usersMap.insert(std::pair<std::string, Client *>(client->getLogin(), client));
+    clientsMap.insert(std::pair<std::string, Client *>(client->getLogin(), client));
 }
 
 void Server::deleteClientFromMap(std::string login) {
-    usersMap.erase(login);
+    clientsMap.erase(login);
 }
+
+bool Server::isInsideClientMap(std::string login) {
+    return clientsMap.find(login) != clientsMap.end();
+}
+
 
 void Server::closeServer() {
     close(fd);
@@ -113,10 +118,10 @@ void Server::createServerSocket(int argc, char **argv) {
 
 
 // Getters and setters
-std::map<std::string, Client *> &Server::getUsersMap() {
-    return usersMap;
+std::map<std::string, Client *> &Server::getClientsMap() {
+    return clientsMap;
 }
 
-void Server::setUsersMap(std::map<std::string, Client *> &usersMap) {
-    Server::usersMap = usersMap;
+void Server::setClientsMap(std::map<std::string, Client *> &usersMap) {
+    Server::clientsMap = usersMap;
 }
