@@ -11,6 +11,7 @@
 #include <mutex>
 #include <csignal>
 
+
 int Game::round;
 std::vector<Client *> Game::clientsRankingByTime;
 Game *Game::gameInstance;
@@ -44,7 +45,7 @@ void Game::run() {
 //    Sending greetings
     Server::sendToAllClients(startMessage);
     mutexClientsMap.lock();
-    while (Server::getClientsMap().size() >= MINIMUM_PLAYERS_NUMBER) {
+    while (Server::getClientsMap().size() >= minPlayersNumber) {
         mutexClientsMap.unlock();
         drawLetter();
         printf("++++ Drawn letter: %c ... \n", letter);
@@ -62,7 +63,7 @@ void Game::run() {
         printf("++++ Start of round: %d ... \n", getRound());
 
 
-        sleep(SERVER_ROUND_TIME);
+        sleep(roundTime);
         printf("++++ End of round: %d ... \n", getRound());
 //        Ignoring new messages from Clients
         incrementRound();

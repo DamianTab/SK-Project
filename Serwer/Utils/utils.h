@@ -2,8 +2,7 @@
 // Created by dejmian on 05.01.2020.
 //
 
-#ifndef SK_PROJECT_UTILS_H
-#define SK_PROJECT_UTILS_H
+#pragma once
 
 //#include <zconf.h>
 #include <cerrno>
@@ -17,20 +16,27 @@
 
 #define BUFFER_SIZE 255
 #define HEADER_SIZE 8
-#define SERVER_ROUND_TIME 40                // do configu
+//#define roundTime 40                // do configu
 #define SLEEP_WRITE 0.5
-#define SLEEP_WRITE_TO_ALL 0.5              // do configu
+//#define sleepWriteToAll 0.5              // do configu
 #define CONNECTION_ROUND_VALUE -1
-#define MINIMUM_PLAYERS_NUMBER 2            // do configu
+//#define minPlayersNumber 2            // do configu
 #define GAME_WORDS_AMOUNT 4
 #define DEFAULT_DELIMITER ","
 #define CORRECT_ANSWER_POINTS 15
 #define CORRECT_REPEATED_ANSWER_POINTS 10
 #define ROUNDS_NUMBER_TO_REMOVE_INACTIVE_CLIENT 2
 
+extern int roundTime;
+extern int minPlayersNumber;
+extern float sleepWriteToAll;
+
+
 extern std::mutex mutexRound;
 extern std::mutex mutexClientsMap;
 extern std::thread gameThread;
+
+void readConfig(int players, float sleepTime, int round);
 
 int readData(int fd, char *buffer, int *roundPtr);
 
@@ -45,6 +51,6 @@ std::string removeLeadingAndTrailingSpaces(std::string phrase);
 
 void toLower(std::string *phrase);
 
-#endif //SK_PROJECT_UTILS_H
+//#endif //SK_PROJECT_UTILS_H
 
 

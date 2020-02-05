@@ -54,7 +54,7 @@ void Server::handleEvent(uint32_t events) {
         writeData(new_connection, successMessage, CONNECTION_ROUND_VALUE);
 
 //        If condition are true then starts new thread and the game begins
-        if (Game::getRound() == 0 && getClientsMap().size() >= MINIMUM_PLAYERS_NUMBER) {
+        if (Game::getRound() == 0 && getClientsMap().size() >= minPlayersNumber) {
             mutexClientsMap.unlock();
             new Game();
         } else{
@@ -74,7 +74,7 @@ void Server::sendToAllClients(char *buffer) {
     for (const auto &kv : clientsMap) {
         writeData(kv.second->fd, buffer, Game::getRound(), false);
     }
-    sleep(SLEEP_WRITE_TO_ALL);
+    sleep(sleepWriteToAll);
 }
 
 

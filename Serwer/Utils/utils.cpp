@@ -16,6 +16,16 @@ std::mutex mutexRound;
 std::mutex mutexClientsMap;
 std::thread gameThread;
 
+int minPlayersNumber = 2;
+float sleepWriteToAll = 0.5;
+int roundTime = 40;
+
+void readConfig(int players, float sleepTime, int round){
+    minPlayersNumber = players;
+    sleepWriteToAll = sleepTime;
+    roundTime = round;
+}
+
 int readData(int fd, char *buffer, int *roundPtr) {
 
     char tempBuffer[BUFFER_SIZE];
