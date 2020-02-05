@@ -1,9 +1,8 @@
-package main;
+package app;
 
-import javafx.beans.property.IntegerProperty;
-import javafx.beans.property.SimpleIntegerProperty;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
+import javafx.beans.property.*;
+
+import java.util.ArrayList;
 
 public class Player {
     private SimpleStringProperty nick;
@@ -11,20 +10,37 @@ public class Player {
     private SimpleStringProperty city;
     private SimpleStringProperty animal;
     private SimpleStringProperty name;
-    private SimpleIntegerProperty points;
+    private SimpleDoubleProperty points;
+    private int roundsInactive;
 
     public Player(String nick,
                   String country,
                   String city,
                   String animal,
                   String name,
-                  int points) {
+                  double points) {
         this.nick = new SimpleStringProperty(nick);
         this.country = new SimpleStringProperty(country);
         this.city = new SimpleStringProperty(city);
         this.animal = new SimpleStringProperty(animal);
         this.name = new SimpleStringProperty(name);
-        this.points = new SimpleIntegerProperty(points);
+        this.points = new SimpleDoubleProperty(points);
+        this.roundsInactive = 0;
+    }
+
+    public int getRoundsInactive() {
+        return roundsInactive;
+    }
+
+    public void setRoundsInactive(int roundsInactive) {
+        this.roundsInactive = roundsInactive;
+    }
+
+    public void setData(ArrayList<String> params){
+        setCountry(params.get(0));
+        setCity(params.get(1));
+        setAnimal(params.get(2));
+        setName(params.get(3));
     }
 
     public String getNick() {
@@ -87,15 +103,15 @@ public class Player {
         this.name.set(name);
     }
 
-    public int getPoints() {
+    public double getPoints() {
         return points.get();
     }
 
-    public IntegerProperty pointsProperty() {
+    public DoubleProperty pointsProperty() {
         return points;
     }
 
-    public void setPoints(int points) {
+    public void setPoints(double points) {
         this.points.set(points);
     }
 }

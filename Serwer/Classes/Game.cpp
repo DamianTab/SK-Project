@@ -192,9 +192,13 @@ void Game::calculateResults() {
 void Game::sendResults() {
     std::scoped_lock lock{mutexClientsMap};
     for (const auto &kv : Server::getClientsMap()) {
-        kv.second->sendAnswersAndPoints();
-        printf("--------------------- Player: '%s' Total Points: %f\n", kv.second->getLogin().c_str(),
-               kv.second->getScore());
+//        kv.second->sendAnswersAndPoints();
+//        printf("--------------------- Player: '%s' Total Points: %f\n", kv.second->getLogin().c_str(),
+//               kv.second->getScore());
+        for(const auto &source : Server::getClientsMap()){
+            std::string answers = source.second->getFormattedAnswers();
+            kv.second->sendMessage(answers);
+        }
     }
 }
 

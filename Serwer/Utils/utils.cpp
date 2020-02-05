@@ -45,7 +45,7 @@ int readData(int fd, char *buffer, int *roundPtr) {
 void writeData(int fd, char *buffer, int roundValue, bool shouldSleep) {
 
     char header[HEADER_SIZE] = {'0', '0', '0', '0', '0', '0', ':', ':'};
-    char message[strlen(buffer) + HEADER_SIZE];
+    char message[strlen(buffer) + HEADER_SIZE + 1];
     std::string tempStr = std::to_string(roundValue);
     char const *pchar = tempStr.c_str();  //use char const* as target type
     for (int i = 0; i < (int) strlen(pchar); ++i) {
@@ -53,6 +53,7 @@ void writeData(int fd, char *buffer, int roundValue, bool shouldSleep) {
     }
     strcpy(message, header);
     strcat(message, buffer);
+    strcat(message, "\n");
     int bytes = write(fd, message, strlen(message));
     if (bytes == -1) error(0, errno, "Write failed on descriptor %d\n", fd);
     if (bytes != (int) strlen(message))

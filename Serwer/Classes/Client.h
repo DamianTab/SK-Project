@@ -36,6 +36,8 @@ public:
 
     void sendAnswersAndPoints();
 
+    std::string getFormattedAnswers();
+
     // Getters and setters
     std::basic_string<char> getLogin();
 
@@ -44,6 +46,8 @@ public:
     float getScore();
 
     void setScore(float score);
+
+    void sendMessage(std::string message);
 };
 
 

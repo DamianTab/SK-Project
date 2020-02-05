@@ -73,6 +73,12 @@ void Client::sendAnswersAndPoints() {
     writeData(fd, messageBuffer, Game::getRound()-1);
 }
 
+void Client::sendMessage(std::string message){
+    char messageBuffer[BUFFER_SIZE];
+    strcpy(messageBuffer, message.c_str());
+    writeData(fd, messageBuffer, Game::getRound() - 1);
+}
+
 // Getters and setters
 std::basic_string<char> Client::getLogin() {
     return login;
@@ -94,4 +100,12 @@ void Client::recalculateTotalScore() {
     for(float value: lastScore){
         totalScore += value;
     }
+}
+
+std::string Client::getFormattedAnswers() {
+    std::string tempString = "Nick: " + login + ";Total points: " + std::to_string(totalScore) + "; ";
+    for (int i = 0; i < (int) lastAnswers.size(); ++i) {
+        tempString += "Answer: '" + lastAnswers[i] + "' points: "+ std::to_string(lastScore[i]) + "; ";
+    }
+    return tempString;
 }

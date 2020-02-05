@@ -17,7 +17,7 @@
 
 #define BUFFER_SIZE 255
 #define HEADER_SIZE 8
-#define SERVER_ROUND_TIME 60                // do configu
+#define SERVER_ROUND_TIME 40                // do configu
 #define SLEEP_WRITE 0.5
 #define SLEEP_WRITE_TO_ALL 0.5              // do configu
 #define CONNECTION_ROUND_VALUE -1

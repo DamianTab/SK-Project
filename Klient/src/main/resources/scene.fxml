@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane snapToPixel="false" style="-fx-background-color: #eeeeff;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+<AnchorPane snapToPixel="false" style="-fx-background-color: #eeeeff;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
    <children>
       <VBox prefHeight="431.0" prefWidth="312.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
          <children>
@@ -17,13 +17,13 @@
                      </font>
                   </Label>
                   <Separator orientation="VERTICAL" />
-                  <Label alignment="CENTER" text="Runda: 0" fx:id ="roundLabel">
+                  <Label fx:id="roundLabel" alignment="CENTER" text="Runda: 0">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Label>
                   <Separator orientation="VERTICAL" />
-                  <Label text="Litera: F" fx:id = "letterLabel"/>
+                  <Label fx:id="letterLabel" text="Litera: F" />
                </children>
             </HBox>
             <TableView fx:id="table" style="-fx-background-color: #ddddee;">
@@ -42,17 +42,17 @@
             <Label text="Twoje odpowiedzi" />
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TextField>
+                  <TextField fx:id="countryField" promptText="Państwo">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <TextField>
+                  <TextField fx:id="cityField" promptText="Miasto\">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <TextField>
+                  <TextField fx:id="animalField" promptText="Zwierzę">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
@@ -60,12 +60,12 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </TextField>
-                  <TextField>
+                  <TextField fx:id="nameField" promptText="Imię">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
                   </TextField>
-                  <Button mnemonicParsing="false" snapToPixel="false" text="Wyślij">
+                  <Button fx:id="button" mnemonicParsing="false" snapToPixel="false" text="Wyślij">
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>

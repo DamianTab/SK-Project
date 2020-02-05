@@ -1,4 +1,4 @@
-package main;
+package app;
 
 // GUI imports
 import javafx.application.Application;
@@ -7,13 +7,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
-import javax.swing.*;
+
+import static java.lang.System.exit;
 
 public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        var loader = new FXMLLoader(getClass().getResource("scene.fxml"));
+        var loader = new FXMLLoader(getClass().getClassLoader().getResource("scene.fxml"));
 
         Parent root = loader.load();
 
@@ -22,12 +23,17 @@ public class Main extends Application {
 
         dialog.setHeaderText(null);
         dialog.setContentText("Wprowadź swój nick:");
+        dialog.setTitle("Nick");
+        dialog.setGraphic(null);
 
         var optionalNick = dialog.showAndWait();
 
         String nick = "";
         if(optionalNick.isPresent()){
             nick = optionalNick.get();
+        }
+        else{
+            exit(0);
         }
 
         String IP = "127.0.0.1";
@@ -43,11 +49,11 @@ public class Main extends Application {
         controller.setup(nick);
 
         try{
-
             controller.setConnection(new Connection(IP, port));
-            controller.getConnection().send("0000-1::" + nick + " ");
+
             // right here thread starts to accept messages
             new Thread(controller).start();
+            controller.getConnection().send("0000-1::" + nick + " ");
         }
         catch(Exception e){
             System.out.println("Could not establish connection with the server at address " + IP + " on port " + port);
