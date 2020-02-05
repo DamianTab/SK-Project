@@ -64,9 +64,9 @@ void Client::handleEvent(uint32_t events) {
 
 void Client::sendAnswersAndPoints() {
     char messageBuffer[BUFFER_SIZE];
-    std::string tempString = "Total points:" + std::to_string(totalScore) + ";\t";
+    std::string tempString = "Nick: " + login + ";Total points: " + std::to_string(totalScore) + "; ";
     for (int i = 0; i < (int) lastAnswers.size(); ++i) {
-        tempString += " Answer: '" + lastAnswers[i] + "' points: "+ std::to_string(lastScore[i]) + ";\t";
+        tempString += "Answer: '" + lastAnswers[i] + "' points: "+ std::to_string(lastScore[i]) + "; ";
     }
     strcpy(messageBuffer, tempString.c_str());
 //    Must be Game::getRound()-1 because round number is increasing after sleep and before new round beginning

@@ -5,10 +5,11 @@
 #ifndef SK_PROJECT_UTILS_H
 #define SK_PROJECT_UTILS_H
 
-#include <zconf.h>
+//#include <zconf.h>
 #include <cerrno>
 #include <error.h>
 #include <string>
+#include <unistd.h>
 #include <vector>
 #include <mutex>
 #include <thread>
@@ -16,11 +17,11 @@
 
 #define BUFFER_SIZE 255
 #define HEADER_SIZE 8
-#define SERVER_ROUND_TIME 10
+#define SERVER_ROUND_TIME 60                // do configu
 #define SLEEP_WRITE 0.5
-#define SLEEP_WRITE_TO_ALL 0.5
+#define SLEEP_WRITE_TO_ALL 0.5              // do configu
 #define CONNECTION_ROUND_VALUE -1
-#define MINIMUM_PLAYERS_NUMBER 2
+#define MINIMUM_PLAYERS_NUMBER 2            // do configu
 #define GAME_WORDS_AMOUNT 4
 #define DEFAULT_DELIMITER ","
 #define CORRECT_ANSWER_POINTS 15

@@ -71,7 +71,7 @@ void loginServer() {
     message = message.substr(0, bytes);
     printf("%s (ROUND '%d')\n", message.c_str(), roundValue);
 
-    while (1){
+    while (true){
         for (int i = 0; i < 2; ++i) {
             bytes = readData(serverSocket, buffer, &roundValue);
             message = std::string(buffer);

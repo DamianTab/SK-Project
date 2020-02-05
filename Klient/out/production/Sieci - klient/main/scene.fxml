@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane snapToPixel="false" style="-fx-background-color: #eeeeff;" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="main.Controller">
+   <children>
+      <VBox prefHeight="431.0" prefWidth="312.0" spacing="5.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="5.0">
+         <children>
+            <HBox>
+               <children>
+                  <Label fx:id="nickLabel" text="Tu będzie nick">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Separator orientation="VERTICAL" />
+                  <Label alignment="CENTER" text="Runda: 0" fx:id ="roundLabel">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Label>
+                  <Separator orientation="VERTICAL" />
+                  <Label text="Litera: F" fx:id = "letterLabel"/>
+               </children>
+            </HBox>
+            <TableView fx:id="table" style="-fx-background-color: #ddddee;">
+              <columns>
+                  <TableColumn fx:id="nickColumn" prefWidth="75.0" text="Nick" />
+                  <TableColumn fx:id="countryColumn" prefWidth="75.0" text="Państwo" />
+                  <TableColumn fx:id="cityColumn" prefWidth="75.0" text="Miasto" />
+                  <TableColumn fx:id="animalColumn" prefWidth="75.0" text="Zwierzę" />
+                  <TableColumn fx:id="nameColumn" prefWidth="75.0" text="Imię" />
+                  <TableColumn fx:id="pointsColumn" prefWidth="75.0" text="Punkty" />
+              </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
+            </TableView>
+            <Label text="Twoje odpowiedzi" />
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <TextField>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <TextField>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <TextField>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </TextField>
+                  <TextField>
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </TextField>
+                  <Button mnemonicParsing="false" snapToPixel="false" text="Wyślij">
+                     <HBox.margin>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

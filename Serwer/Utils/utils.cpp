@@ -7,6 +7,11 @@
 #include "utils.h"
 #include "string"
 
+
+// jak header jest -1 to jest logowanie
+// jak header jest 0 to jest błąd
+// jak header >0 to rundy
+
 std::mutex mutexRound;
 std::mutex mutexClientsMap;
 std::thread gameThread;
