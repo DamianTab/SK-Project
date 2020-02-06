@@ -49,6 +49,8 @@ public class Controller implements Runnable
 
         table.setPlaceholder(new Label("Wyniki rundy pojawią się po jej zakończeniu"));
 
+        button.setDisable(true);
+
         button.setOnMouseClicked(mouseEvent -> {
             this.onClick();
         });
@@ -71,6 +73,9 @@ public class Controller implements Runnable
 
 
                 Platform.runLater(() -> {
+                    if(lastRoundSent < game.getRound()){
+                        button.setDisable(false);
+                    }
                     roundLabel.setText("Runda: " + game.getRound());
                     letterLabel.setText("Litera: " + game.getCurrentLetter());
                 });
@@ -88,7 +93,6 @@ public class Controller implements Runnable
             System.out.println("You have sent a message this turn!");
             return;
         }
-
 
         String country = countryField.getText();
         String city = cityField.getText();
@@ -112,6 +116,7 @@ public class Controller implements Runnable
             try {
                 lastRoundSent = game.getRound();
                 System.out.println(message);
+                button.setDisable(true);
                 connection.send(message);
             } catch (IOException e) {
                 System.err.println("Could not send message due to connection error");

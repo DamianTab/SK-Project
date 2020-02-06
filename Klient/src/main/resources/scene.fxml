@@ -39,37 +39,53 @@
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                </columnResizePolicy>
             </TableView>
-            <Label text="Twoje odpowiedzi" />
+            <Label text="Twoje odpowiedzi:">
+               <padding>
+                  <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+               </padding></Label>
             <HBox prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <TextField fx:id="countryField" promptText="Państwo">
+                  <VBox>
+                     <children>
+                        <Label text="Państwo" />
+                        <TextField fx:id="countryField" promptText="Państwo" />
+                     </children>
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
-                  </TextField>
-                  <TextField fx:id="cityField" promptText="Miasto\">
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label text="Miasto" />
+                        <TextField fx:id="cityField" promptText="Miasto" />
+                     </children>
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
-                  </TextField>
-                  <TextField fx:id="animalField" promptText="Zwierzę">
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label text="Zwierzę" />
+                        <TextField fx:id="animalField" promptText="Zwierzę">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </TextField>
+                     </children>
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
-                     <padding>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </padding>
-                  </TextField>
-                  <TextField fx:id="nameField" promptText="Imię">
+                  </VBox>
+                  <VBox>
+                     <children>
+                        <Label text="Imię" />
+                        <TextField fx:id="nameField" promptText="Imię" />
+                     </children>
                      <HBox.margin>
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </HBox.margin>
-                  </TextField>
-                  <Button fx:id="button" mnemonicParsing="false" snapToPixel="false" text="Wyślij">
-                     <HBox.margin>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                     </HBox.margin>
-                  </Button>
+                  </VBox>
+                  <Button fx:id="button" alignment="CENTER" minHeight="45.0" minWidth="90.0" mnemonicParsing="false" nodeOrientation="RIGHT_TO_LEFT" prefWidth="56.0" snapToPixel="false" text="Wyślij" />
                </children>
             </HBox>
          </children>

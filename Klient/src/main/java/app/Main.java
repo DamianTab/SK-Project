@@ -21,10 +21,10 @@ public class Main extends Application {
         var dialog = new TextInputDialog();
         var parameters = getParameters().getRaw();
 
+        dialog.setGraphic(null);
         dialog.setHeaderText(null);
         dialog.setContentText("Wprowadź swój nick:");
         dialog.setTitle("Nick");
-        dialog.setGraphic(null);
 
         var optionalNick = dialog.showAndWait();
 

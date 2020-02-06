@@ -12,7 +12,7 @@ Server *server;
 
 bool startsWith(std::string str, std::string matches){
 
-    for(int i = 0; i < matches.length() || i < str.length(); i++){
+    for(unsigned int i = 0; i < matches.length() || i < str.length(); i++){
         if(str[0] != matches[0]) return false;
     }
     return true;
@@ -38,7 +38,7 @@ int main(int argc, char **argv) {
         std::cout << "Loading config..." << std::endl;
         while (std::getline(config, line)) {
             std::string value = "";
-            for (int i = 12; i < line.length(); i++) {
+            for (unsigned int i = 12; i < line.length(); i++) {
                 value += line[i];
             }
             if (startsWith(line, "min_player:")) {
@@ -50,7 +50,6 @@ int main(int argc, char **argv) {
                 v3 = stof(value);
             }
         }
-        std::cout << v1 << ", " << v2 << ", " << v3 << std::endl;
         readConfig(v1, v3, v2);
         config.close();
     }
