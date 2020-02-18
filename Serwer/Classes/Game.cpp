@@ -167,7 +167,7 @@ void Game::calculateResults() {
 //                        Have to be other client
                     if (kv.second == client) continue;
 //                        If other client has the same answer
-                   if( kv.second->lastAnswers.size() >= i + 1 ){
+                   if( (int) kv.second->lastAnswers.size() >= i + 1 ){
                         if (kv.second->lastAnswers[i] == client->lastAnswers[i]) {
                             isAnswerRepeated = true;
                             break;
