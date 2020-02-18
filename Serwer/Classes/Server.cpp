@@ -41,10 +41,6 @@ void Server::handleEvent(uint32_t events) {
             int bytes = readData(new_connection, receiveBuffer, &roundValue);
             login = std::string(receiveBuffer);
             login = login.substr(0, bytes);
-
-            //todo usunac
-            login = login + std::to_string(rand());
-//            todo dolozyc mutex
         } while (isInsideClientMap(login));
 
         mutexClientsMap.lock();
@@ -54,7 +50,7 @@ void Server::handleEvent(uint32_t events) {
         writeData(new_connection, successMessage, CONNECTION_ROUND_VALUE);
 
 //        If condition are true then starts new thread and the game begins
-        if (Game::getRound() == 0 && getClientsMap().size() >= minPlayersNumber) {
+        if (Game::getRound() == 0 && (int) getClientsMap().size() >= minPlayersNumber) {
             mutexClientsMap.unlock();
             new Game();
         } else{

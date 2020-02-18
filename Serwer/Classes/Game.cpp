@@ -45,7 +45,7 @@ void Game::run() {
 //    Sending greetings
     Server::sendToAllClients(startMessage);
     mutexClientsMap.lock();
-    while (Server::getClientsMap().size() >= minPlayersNumber) {
+    while ((int) Server::getClientsMap().size() >= minPlayersNumber) {
         mutexClientsMap.unlock();
         drawLetter();
         printf("++++ Drawn letter: %c ... \n", letter);
@@ -67,21 +67,28 @@ void Game::run() {
         printf("++++ End of round: %d ... \n", getRound());
 //        Ignoring new messages from Clients
         incrementRound();
+        printf("++++ 1 %d ... \n", getRound());
 
 //        Removing inactive clients
         removeInactiveClients();
+        printf("++++ 2 %d ... \n", getRound());
 
 //        Calculating results
         calculateResults();
+        printf("++++ 3 %d ... \n", getRound());
 
 //        Sending result
         sendResults();
+        printf("++++ 4 %d ... \n", getRound());
 
 //        Clean up for next round
         clearClientsPoints();
+        printf("++++ 5 %d ... \n", getRound());
 
 //        Mutex for while condition
         mutexClientsMap.lock();
+        printf("++++ 6 %d ... \n", getRound());
+
     }
 //  Release mutex after while condition
     mutexClientsMap.unlock();
@@ -153,7 +160,6 @@ void Game::calculateResults() {
     float coefficient = 1.0;
     for (auto it = clientsRankingByTime.begin(); it != clientsRankingByTime.end(); ++it) {
         Client *client = *it;
-
 //            If player has been already disconnected then next client from ranking
         if (!Server::isInsideClientMap(client->getLogin())) {
             continue;

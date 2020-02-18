@@ -94,7 +94,7 @@ public class Game {
         var list = msg.split(" ");
         var nick = "";
         if(list[0].trim().equals("Nick:")){
-            for(int i = 1; i < list.length - 1; i++){
+            for(int i = 1; i < list.length; i++){
                 nick = nick.concat(list[i]) + " ";
             }
         }

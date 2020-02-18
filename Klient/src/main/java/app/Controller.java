@@ -101,7 +101,7 @@ public class Controller implements Runnable
 
         var answers = new ArrayList<>(Arrays.asList(country, city, animal, name));
 
-        if(areAnswersValid(answers)){
+//        if(areAnswersValid(answers)){
             String header = game.getRound() + "::";
             String fill = "0".repeat(8 - header.length());
 
@@ -121,7 +121,7 @@ public class Controller implements Runnable
             } catch (IOException e) {
                 System.err.println("Could not send message due to connection error");
             }
-        }
+//        }
     }
 
     public Connection getConnection() {

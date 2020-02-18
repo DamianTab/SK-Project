@@ -2,11 +2,13 @@ package app;
 
 // GUI imports
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.TextInputDialog;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import static java.lang.System.exit;
 
@@ -53,12 +55,18 @@ public class Main extends Application {
 
             // right here thread starts to accept messages
             new Thread(controller).start();
-            controller.getConnection().send("0000-1::" + nick + " ");
+            controller.getConnection().send("0000-1::" + nick);
         }
         catch(Exception e){
             System.out.println("Could not establish connection with the server at address " + IP + " on port " + port);
         }
 
+        primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+            @Override
+            public void handle(WindowEvent event) {
+                exit(0);
+            }
+        });
         primaryStage.setTitle("Państwa - miasta");
         primaryStage.setScene(new Scene(root, 900, 500));
         primaryStage.show();
