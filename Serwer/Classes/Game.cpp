@@ -67,28 +67,21 @@ void Game::run() {
         printf("++++ End of round: %d ... \n", getRound());
 //        Ignoring new messages from Clients
         incrementRound();
-        printf("++++ 1 %d ... \n", getRound());
 
 //        Removing inactive clients
         removeInactiveClients();
-        printf("++++ 2 %d ... \n", getRound());
 
 //        Calculating results
         calculateResults();
-        printf("++++ 3 %d ... \n", getRound());
 
 //        Sending result
         sendResults();
-        printf("++++ 4 %d ... \n", getRound());
 
 //        Clean up for next round
         clearClientsPoints();
-        printf("++++ 5 %d ... \n", getRound());
 
 //        Mutex for while condition
         mutexClientsMap.lock();
-        printf("++++ 6 %d ... \n", getRound());
-
     }
 //  Release mutex after while condition
     mutexClientsMap.unlock();
@@ -164,10 +157,8 @@ void Game::calculateResults() {
         if (!Server::isInsideClientMap(client->getLogin())) {
             continue;
         }
-
 //            This client already has default values (0);
         client->lastScore.clear();
-
         for (int i = 0; i < (int) client->lastAnswers.size(); ++i) {
             bool isAnswerRepeated = false;
 //                If answer is correct
@@ -176,11 +167,14 @@ void Game::calculateResults() {
 //                        Have to be other client
                     if (kv.second == client) continue;
 //                        If other client has the same answer
-                    if (kv.second->lastAnswers[i] == client->lastAnswers[i]) {
-                        isAnswerRepeated = true;
-                        break;
+                   if( kv.second->lastAnswers.size() >= i + 1 ){
+                        if (kv.second->lastAnswers[i] == client->lastAnswers[i]) {
+                            isAnswerRepeated = true;
+                            break;
+                        }
                     }
                 }
+
                 if (isAnswerRepeated) {
                     client->lastScore.push_back(CORRECT_REPEATED_ANSWER_POINTS * coefficient);
                 } else {
@@ -193,6 +187,7 @@ void Game::calculateResults() {
         }
         coefficient -= 0.1;
         client->recalculateTotalScore();
+
     }
 }
 
