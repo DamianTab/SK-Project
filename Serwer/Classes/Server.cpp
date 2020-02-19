@@ -13,7 +13,7 @@ std::map<std::string, Client *> Server::clientsMap;
 
 char welcomeMessage[] = "Welcome in Country-Capitals Game !!!\n";
 char loginMessage[] = "Please enter unique login: \n";
-char successMessage[] = "Success\n";
+char successMessage[] = "Success";
 
 Server::Server(int argc, char **argv) {
     clearClientsMap();
@@ -32,7 +32,7 @@ void Server::handleEvent(uint32_t events) {
         int new_connection = accept(fd, NULL, NULL);
         printf("New connection noticed with socket: %d \n", new_connection);
 
-        writeData(new_connection, welcomeMessage, CONNECTION_ROUND_VALUE);
+//        writeData(new_connection, welcomeMessage, CONNECTION_ROUND_VALUE);
         char receiveBuffer[BUFFER_SIZE];
         std::string login;
 

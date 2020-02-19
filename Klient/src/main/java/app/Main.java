@@ -28,16 +28,6 @@ public class Main extends Application {
         dialog.setContentText("Wprowadź swój nick:");
         dialog.setTitle("Nick");
 
-        var optionalNick = dialog.showAndWait();
-
-        String nick = "";
-        if(optionalNick.isPresent()){
-            nick = optionalNick.get();
-        }
-        else{
-            exit(0);
-        }
-
         String IP = "127.0.0.1";
         int port = 5000;
 
@@ -47,15 +37,34 @@ public class Main extends Application {
         }
 
 
-        Controller controller = loader.getController();
-        controller.setup(nick);
 
+        Controller controller = loader.getController();
         try{
             controller.setConnection(new Connection(IP, port));
+            String nick = "";
+            String msg = controller.getConnection().read();
+            System.out.println(msg + " " + msg.length());
+            while(! msg.equals("0000-1::Success\n")){
+                //Read login from keyboard
+                var optionalNick = dialog.showAndWait();
+                nick = "";
+                if(optionalNick.isPresent()){
+                    nick = optionalNick.get();
+                }
+                else{
+                    exit(0);
+                }
 
+
+                //login send
+                controller.getConnection().send("0000-1::" + nick);
+                msg = controller.getConnection().read();
+                System.out.println(msg + " " + msg.length());
+            }
+
+            controller.setup(nick);
             // right here thread starts to accept messages
             new Thread(controller).start();
-            controller.getConnection().send("0000-1::" + nick);
         }
         catch(Exception e){
             System.out.println("Could not establish connection with the server at address " + IP + " on port " + port);
